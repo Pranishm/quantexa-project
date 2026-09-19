@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-export type UserRole = "guest" | "student" | "researcher" | "pro" | "admin";
+export type UserRole = "guest" | "trader" | "researcher" | "pro" | "admin";
 export type WorkspaceMode = "RESEARCH" | "TRADING" | "LEARNING";
 
 interface WorkspaceContextType {
@@ -35,7 +35,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const savedRole = localStorage.getItem("quantora_role") as UserRole | null;
-      if (savedRole && ["guest", "student", "researcher", "pro", "admin"].includes(savedRole)) {
+      if (savedRole && ["guest", "trader", "researcher", "pro", "admin"].includes(savedRole)) {
         setRoleState(savedRole);
       }
       const savedMode = localStorage.getItem("quantora_mode") as WorkspaceMode | null;
@@ -55,9 +55,9 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
       // Ignore
     }
     // Set natural default mode according to role
-    if (newRole === "student") {
-      setModeState("LEARNING");
-    } else if (newRole === "guest") {
+    if (newRole === "trader") {
+      setModeState("TRADING");
+    } else if (newRole === "researcher" || newRole === "pro" || newRole === "guest") {
       setModeState("RESEARCH");
     }
   };

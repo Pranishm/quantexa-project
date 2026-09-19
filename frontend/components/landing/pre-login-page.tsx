@@ -117,17 +117,38 @@ const executionCards = [
 ];
 
 export function PreLoginPage() {
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof document === "undefined") return true;
-    return !document.documentElement.classList.contains("light");
-  });
+  const [isDark, setIsDark] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<"CANDLE" | "LINE" | "NORM">("CANDLE");
   const [voiceStep, setVoiceStep] = useState<number>(0);
 
+  // Synchronize initial theme on client mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("quantora_theme");
+      if (saved === "light") {
+        document.documentElement.classList.add("light");
+        setIsDark(false);
+      } else if (saved === "dark") {
+        document.documentElement.classList.remove("light");
+        setIsDark(true);
+      } else {
+        const isCurrentlyDark = !document.documentElement.classList.contains("light");
+        setIsDark(isCurrentlyDark);
+      }
+    }
+  }, []);
+
   const toggleTheme = () => {
     if (typeof document !== "undefined") {
-      document.documentElement.classList.toggle("light");
-      setIsDark(!document.documentElement.classList.contains("light"));
+      const willBeDark = !isDark;
+      setIsDark(willBeDark);
+      if (willBeDark) {
+        document.documentElement.classList.remove("light");
+        try { localStorage.setItem("quantora_theme", "dark"); } catch {}
+      } else {
+        document.documentElement.classList.add("light");
+        try { localStorage.setItem("quantora_theme", "light"); } catch {}
+      }
     }
   };
 
@@ -187,8 +208,8 @@ export function PreLoginPage() {
           <button onClick={() => scrollToSection("simulation")} className="hover:text-[var(--text-primary)] transition-colors cursor-pointer">
             Simulation
           </button>
-          <button onClick={() => scrollToSection("academy")} className="hover:text-[var(--text-primary)] transition-colors cursor-pointer">
-            Academy
+          <button onClick={() => scrollToSection("trading-lab")} className="hover:text-[var(--text-primary)] transition-colors cursor-pointer">
+            Trader Desk
           </button>
         </nav>
 
@@ -196,10 +217,10 @@ export function PreLoginPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-xl clay-button text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-[var(--border)] transition-colors"
+            className="p-2.5 rounded-xl clay-button text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-[var(--border)] transition-all cursor-pointer"
             title="Toggle Light / Dark Clay Theme"
           >
-            {isDark ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+            {isDark ? <Sun className="w-4 h-4 text-[#FDE047]" /> : <Moon className="w-4 h-4 text-[#38BDF8]" />}
           </button>
 
           <Link
@@ -211,7 +232,7 @@ export function PreLoginPage() {
 
           <Link
             href="/app/overview"
-            className="px-4 py-2 rounded-xl bg-[var(--accent)] text-white text-xs font-semibold clay-button flex items-center gap-1.5 hover:opacity-95 transition-opacity shadow-sm"
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#00E599] to-[#00C2FF] text-[#05070C] text-xs font-bold clay-button flex items-center gap-1.5 hover:opacity-95 transition-opacity shadow-sm"
           >
             <span>Open Research Station</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -220,7 +241,7 @@ export function PreLoginPage() {
       </header>
 
       {/* ── 2. HERO SECTION (APEX 3D BITCOIN HERO) ──────────────── */}
-      <ApexHeroSection onExploreOptions={() => scrollToSection("challenge")} />
+      <ApexHeroSection isDark={isDark} onExploreOptions={() => scrollToSection("challenge")} />
 
       {/* ── 3. REQUIRED CHALLENGE COVERAGE ───────────────────────── */}
       <section id="challenge" className="py-24 px-6 sm:px-10 border-t border-[var(--border)] max-w-7xl mx-auto space-y-12">
@@ -520,48 +541,48 @@ export function PreLoginPage() {
         </div>
       </section>
 
-      {/* ── 6. ACADEMY & STUDENT LEARNING ─────────────────────────── */}
-      <section id="academy" className="py-24 px-6 sm:px-10 border-t border-[var(--border)] max-w-7xl mx-auto space-y-12">
+      {/* ── 6. TRADER & RESEARCH LAB ─────────────────────────── */}
+      <section id="trading-lab" className="py-24 px-6 sm:px-10 border-t border-[var(--border)] max-w-7xl mx-auto space-y-12">
         <div className="max-w-2xl space-y-3">
-          <div className="text-xs font-mono text-[var(--accent)] font-semibold uppercase tracking-wider">
-            STUDENT ACADEMY
+          <div className="text-xs font-mono text-[#00E599] font-bold uppercase tracking-wider">
+            QUANTITATIVE TRADING &amp; RESEARCH LAB
           </div>
           <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-primary)]">
-            Learn by testing.
+            Institutional Execution &amp; Factor Research.
           </h2>
           <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-            Turn quantitative finance into something you can explore, experiment with, and master without financial risk.
+            Execute high-speed simulated trades, test predictive alpha factors, and explore 3D parameter stability manifolds without capital risk.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="clay-card p-6 rounded-2xl border border-[var(--border)] space-y-3">
-            <div className="w-8 h-8 rounded-xl bg-[var(--accent)]/15 text-[var(--accent)] flex items-center justify-center font-bold text-xs font-mono">
+            <div className="w-8 h-8 rounded-xl bg-[#00C2FF]/15 text-[#00C2FF] flex items-center justify-center font-bold text-xs font-mono">
               01
             </div>
-            <h3 className="text-base font-bold text-[var(--text-primary)]">Guided Concept Labs</h3>
+            <h3 className="text-base font-bold text-[var(--text-primary)]">Strategy Backtesting &amp; 3D Manifolds</h3>
             <p className="text-xs text-[var(--text-secondary)]">
-              Interactive modules on Sharpe ratio, drawdown recovery, volatility scaling, and regime transitions.
+              Volumetric Sharpe landscape modeling, Monte Carlo confidence intervals, and drawdown recovery curves.
             </p>
           </div>
 
           <div className="clay-card p-6 rounded-2xl border border-[var(--border)] space-y-3">
-            <div className="w-8 h-8 rounded-xl bg-[var(--positive)]/15 text-[var(--positive)] flex items-center justify-center font-bold text-xs font-mono">
+            <div className="w-8 h-8 rounded-xl bg-[#00E599]/15 text-[#00E599] flex items-center justify-center font-bold text-xs font-mono">
               02
             </div>
-            <h3 className="text-base font-bold text-[var(--text-primary)]">Virtual Paper Trading</h3>
+            <h3 className="text-base font-bold text-[var(--text-primary)]">Virtual Paper Trading ($100,000)</h3>
             <p className="text-xs text-[var(--text-secondary)]">
-              $100,000 simulated account. Execute market and limit orders with real order book micro-motion.
+              Simulated institutional execution desk with live order book depth, dynamic slippage, and fee drag.
             </p>
           </div>
 
           <div className="clay-card p-6 rounded-2xl border border-[var(--border)] space-y-3">
-            <div className="w-8 h-8 rounded-xl bg-[var(--warning)]/15 text-[var(--warning)] flex items-center justify-center font-bold text-xs font-mono">
+            <div className="w-8 h-8 rounded-xl bg-[#FDE047]/15 text-[#FDE047] flex items-center justify-center font-bold text-xs font-mono">
               03
             </div>
-            <h3 className="text-base font-bold text-[var(--text-primary)]">AI Tutor &amp; Quizzes</h3>
+            <h3 className="text-base font-bold text-[var(--text-primary)]">Evidence AI Copilot &amp; Risk Engine</h3>
             <p className="text-xs text-[var(--text-secondary)]">
-              Ask questions directly against historical charts. Receive instant feedback and earn badges.
+              Ask natural language queries across multi-asset returns. Receive verifiable risk attributions and factor audits.
             </p>
           </div>
         </div>
@@ -693,9 +714,13 @@ export function PreLoginPage() {
       {/* ── 10. FOOTER ───────────────────────────────────────────── */}
       <footer className="border-t border-[var(--border)] py-10 px-6 sm:px-10 text-xs font-mono text-[var(--text-muted)]">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-center sm:items-baseline gap-3">
             <span className="font-bold text-[var(--text-primary)]">QUANTORA</span>
             <span>© 2026 QUANTEXA RESEARCH LABS</span>
+            <span className="hidden sm:inline text-[var(--text-subtle)]">·</span>
+            <span className="text-[11px] text-[var(--accent)] font-semibold">
+              ⚡ Made by Team Blaze IQ: Sujan S, Pranish M, Varshan Karthik R, Eniyan CG, Naveen SS
+            </span>
           </div>
           <div className="flex items-center gap-5">
             <Link href="/login" className="hover:text-[var(--text-primary)]">Sign In</Link>

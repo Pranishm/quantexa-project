@@ -95,6 +95,28 @@ const DEFAULT_PORTFOLIO: PaperPortfolio = {
       unrealizedPnlPct: 3.33,
       realizedPnl: 210.0,
     },
+    "1INCH": {
+      symbol: "1INCH",
+      side: "LONG",
+      quantity: 50000.0,
+      averageEntryPrice: 0.0912,
+      currentPrice: 0.0971,
+      notional: 4855.0,
+      unrealizedPnl: 295.0,
+      unrealizedPnlPct: 6.47,
+      realizedPnl: 45.0,
+    },
+    ETH: {
+      symbol: "ETH",
+      side: "LONG",
+      quantity: 3.5,
+      averageEntryPrice: 3650.0,
+      currentPrice: 3845.5,
+      notional: 13459.25,
+      unrealizedPnl: 684.25,
+      unrealizedPnlPct: 5.36,
+      realizedPnl: 180.0,
+    },
   },
   orders: [
     {

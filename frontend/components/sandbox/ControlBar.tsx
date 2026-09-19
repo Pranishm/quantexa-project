@@ -49,12 +49,12 @@ export function ControlBar({
   const currentStrat = STRATEGIES.find((s) => s.name === strategy) ?? STRATEGIES[0];
 
   return (
-    <div className="glass-panel p-3 flex flex-wrap items-center gap-3">
+    <div className="clay-card rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-3 flex flex-wrap items-center gap-3 shadow-sm">
       {/* Asset Selector */}
       <div className="relative">
         <button
           onClick={() => { setAssetOpen(!assetOpen); setStratOpen(false); }}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[rgba(15,23,42,0.6)] border border-[var(--neo-border)] hover:border-[rgba(148,163,184,0.25)] transition-all text-sm"
+          className="flex items-center gap-2 px-3 py-2 rounded-xl clay-recessed bg-[var(--bg-recessed)] border border-[var(--border)] hover:border-[var(--accent)]/40 transition-all text-sm"
         >
           <span className="w-2 h-2 rounded-full" style={{ background: currentAsset.color }} />
           <span className="font-medium text-[var(--text-primary)]">{currentAsset.label}</span>
@@ -62,13 +62,13 @@ export function ControlBar({
         </button>
 
         {assetOpen && (
-          <div className="absolute top-full left-0 mt-1 w-48 py-1 rounded-xl glass-panel z-50 border border-[var(--neo-border)]">
+          <div className="absolute top-full left-0 mt-1 w-48 py-1 rounded-xl clay-card bg-[var(--bg-surface)] z-50 border border-[var(--border-strong)] shadow-xl">
             {ASSETS.map((a) => (
               <button
                 key={a.symbol}
                 onClick={() => { onSymbolChange(a.symbol); setAssetOpen(false); }}
-                className={`w-full text-left px-3 py-2 flex items-center gap-2 text-sm hover:bg-[rgba(255,255,255,0.05)] transition-colors ${
-                  a.symbol === symbol ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
+                className={`w-full text-left px-3 py-2 flex items-center gap-2 text-sm hover:bg-[var(--bg-hover)] transition-colors ${
+                  a.symbol === symbol ? "text-[var(--accent)] font-bold" : "text-[var(--text-secondary)]"
                 }`}
               >
                 <span className="w-2 h-2 rounded-full" style={{ background: a.color }} />
@@ -83,21 +83,21 @@ export function ControlBar({
       <div className="relative">
         <button
           onClick={() => { setStratOpen(!stratOpen); setAssetOpen(false); }}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[rgba(15,23,42,0.6)] border border-[var(--neo-border)] hover:border-[rgba(148,163,184,0.25)] transition-all text-sm"
+          className="flex items-center gap-2 px-3 py-2 rounded-xl clay-recessed bg-[var(--bg-recessed)] border border-[var(--border)] hover:border-[var(--accent)]/40 transition-all text-sm"
         >
-          <Settings2 className="w-3.5 h-3.5 text-[var(--neo-blue)]" />
+          <Settings2 className="w-3.5 h-3.5 text-[var(--accent)]" />
           <span className="font-medium text-[var(--text-primary)]">{currentStrat.label}</span>
           <ChevronDown className="w-3.5 h-3.5 text-[var(--text-muted)]" />
         </button>
 
         {stratOpen && (
-          <div className="absolute top-full left-0 mt-1 w-48 py-1 rounded-xl glass-panel z-50 border border-[var(--neo-border)]">
+          <div className="absolute top-full left-0 mt-1 w-48 py-1 rounded-xl clay-card bg-[var(--bg-surface)] z-50 border border-[var(--border-strong)] shadow-xl">
             {STRATEGIES.map((s) => (
               <button
                 key={s.name}
                 onClick={() => { onStrategyChange(s.name); setStratOpen(false); }}
-                className={`w-full text-left px-3 py-2 text-sm hover:bg-[rgba(255,255,255,0.05)] transition-colors ${
-                  s.name === strategy ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
+                className={`w-full text-left px-3 py-2 text-sm hover:bg-[var(--bg-hover)] transition-colors ${
+                  s.name === strategy ? "text-[var(--accent)] font-bold" : "text-[var(--text-secondary)]"
                 }`}
               >
                 {s.label}
@@ -114,14 +114,14 @@ export function ControlBar({
           type="date"
           value={startDate}
           onChange={(e) => onStartDateChange(e.target.value)}
-          className="px-2 py-1.5 rounded-lg bg-[rgba(15,23,42,0.6)] border border-[var(--neo-border)] text-xs text-[var(--text-primary)] font-mono focus:outline-none focus:border-[var(--neo-blue)] transition-colors"
+          className="px-2 py-1.5 rounded-lg clay-recessed bg-[var(--bg-recessed)] border border-[var(--border)] text-xs text-[var(--text-primary)] font-mono focus:outline-none focus:border-[var(--accent)] transition-colors"
         />
         <span className="text-[var(--text-muted)] text-xs">→</span>
         <input
           type="date"
           value={endDate}
           onChange={(e) => onEndDateChange(e.target.value)}
-          className="px-2 py-1.5 rounded-lg bg-[rgba(15,23,42,0.6)] border border-[var(--neo-border)] text-xs text-[var(--text-primary)] font-mono focus:outline-none focus:border-[var(--neo-blue)] transition-colors"
+          className="px-2 py-1.5 rounded-lg clay-recessed bg-[var(--bg-recessed)] border border-[var(--border)] text-xs text-[var(--text-primary)] font-mono focus:outline-none focus:border-[var(--accent)] transition-colors"
         />
       </div>
 

@@ -76,9 +76,9 @@ export function MetricsCard({
 }: MetricsCardProps) {
   const trendColor =
     trend === "up"
-      ? "var(--neo-mint)"
+      ? "var(--positive)"
       : trend === "down"
-        ? "var(--neo-coral)"
+        ? "var(--negative)"
         : "var(--text-muted)";
 
   const TrendIcon =
@@ -86,7 +86,7 @@ export function MetricsCard({
 
   return (
     <div
-      className={`glass-panel glass-panel-hover p-5 flex flex-col justify-between gap-3 min-h-[120px] group ${className}`}
+      className={`clay-card rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 flex flex-col justify-between gap-3 min-h-[120px] shadow-sm hover:scale-[1.01] transition-all group ${className}`}
     >
       {/* Header row */}
       <div className="flex items-start justify-between gap-2">

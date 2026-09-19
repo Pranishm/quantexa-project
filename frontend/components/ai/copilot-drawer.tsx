@@ -181,9 +181,9 @@ export function CopilotDrawer({ isOpen, onClose, contextName = "Asset Research" 
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-xs font-bold tracking-wider text-[var(--text-primary)] uppercase">QUANTORA INTELLIGENCE</h3>
+              <h3 className="text-xs font-bold tracking-wider text-[var(--text-primary)] uppercase">FEATHERLESS AI</h3>
               <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-[var(--accent-muted)] text-[var(--accent)] font-semibold">
-                AI COPILOT
+                ACTIVE
               </span>
             </div>
             <div className="text-[10px] text-[var(--text-muted)] flex items-center gap-1.5 mt-0.5">
@@ -334,7 +334,7 @@ export function CopilotDrawer({ isOpen, onClose, contextName = "Asset Research" 
                     handleSend();
                   }
                 }}
-                placeholder={`Ask Copilot about ${contextName}...`}
+                placeholder={`Ask Featherless AI about ${contextName}...`}
                 className="flex-1 bg-transparent text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none"
               />
               <button

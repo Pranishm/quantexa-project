@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type UserRole = "guest" | "student" | "researcher" | "pro_researcher" | "admin";
+export type UserRole = "guest" | "trader" | "researcher" | "pro_researcher" | "admin";
 
 export interface UserProfile {
   id: string;
@@ -43,12 +43,12 @@ export const ROLE_PERMISSIONS: Record<UserRole, PermissionMatrix> = {
     paperTrading: false,
     adminAccess: false,
   },
-  student: {
+  trader: {
     viewPublicMarkets: true,
     runDemoBacktest: true,
     fullBacktest: true,
     saveStrategy: true,
-    robustnessLab: false,
+    robustnessLab: true,
     copilotAccess: "full",
     portfolioTracking: true,
     paperTrading: true,
@@ -134,17 +134,17 @@ export const useAuthStore = create<AuthState>()(
             tier = "Pro";
             copilot = 999;
             grid = "50 × 50";
-            name = "Dr. Alexander Vance";
+            name = "Dr. Alexander Vance (Pro)";
           } else if (role === "researcher") {
-            tier = "Free";
-            copilot = 8;
+            tier = "Pro";
+            copilot = 50;
+            grid = "30 × 30";
+            name = "Alexander Vance (Researcher)";
+          } else if (role === "trader") {
+            tier = "Pro";
+            copilot = 50;
             grid = "20 × 20";
-            name = "Sujan (Researcher)";
-          } else if (role === "student") {
-            tier = "Free";
-            copilot = 25;
-            grid = "10 × 10";
-            name = "Alex Chen (Student)";
+            name = "Alexander Vance (Trader)";
           } else {
             tier = "Free";
             copilot = 3;

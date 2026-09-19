@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { ALL_OHLCV, barsByTimeframe, type OHLCVBar } from "./demo-data/ohlcv";
 
-export type AssetKey = "BTC" | "SOL" | "GOLD" | "NVDA";
+export type AssetKey = "BTC" | "SOL" | "GOLD" | "NVDA" | "1INCH" | "ETH";
 
 export interface AssetProfile {
   symbol: AssetKey;
@@ -62,6 +62,28 @@ export const ASSET_PROFILES: Record<AssetKey, AssetProfile> = {
     description: "Semiconductor manufacturer powering generative AI and accelerated computing.",
     color: "#76B900",
   },
+  "1INCH": {
+    symbol: "1INCH",
+    ticker: "1INCH/USD",
+    name: "1inch Network",
+    assetClass: "crypto",
+    decimals: 4,
+    currency: "$",
+    basePrice: 0.0971,
+    description: "Decentralized DEX aggregator and algorithmic liquidity routing protocol.",
+    color: "#2B82F6",
+  },
+  ETH: {
+    symbol: "ETH",
+    ticker: "ETH/USD",
+    name: "Ethereum",
+    assetClass: "crypto",
+    decimals: 2,
+    currency: "$",
+    basePrice: 3845.5,
+    description: "Global decentralized smart contract compute layer and ecosystem foundation.",
+    color: "#627EEA",
+  },
 };
 
 export interface MarketMetrics {
@@ -110,6 +132,8 @@ class MarketDataHub {
       SOL: ASSET_PROFILES.SOL.basePrice,
       GOLD: ASSET_PROFILES.GOLD.basePrice,
       NVDA: ASSET_PROFILES.NVDA.basePrice,
+      "1INCH": ASSET_PROFILES["1INCH"].basePrice,
+      ETH: ASSET_PROFILES.ETH.basePrice,
     };
 
     const nowStr = new Date().toISOString().slice(0, 10);
@@ -118,6 +142,8 @@ class MarketDataHub {
       SOL: { time: nowStr, open: 234.2, high: 241.5, low: 232.8, close: 238.6, volume: 380200 },
       GOLD: { time: nowStr, open: 2664.1, high: 2678.5, low: 2661.0, close: 2672.4, volume: 14200 },
       NVDA: { time: nowStr, open: 176.4, high: 180.2, low: 175.8, close: 178.25, volume: 1950000 },
+      "1INCH": { time: nowStr, open: 0.0905, high: 0.0975, low: 0.0904, close: 0.0971, volume: 24349000 },
+      ETH: { time: nowStr, open: 3810.0, high: 3865.0, low: 3795.0, close: 3845.5, volume: 450000 },
     };
 
     this.metrics = {} as Record<AssetKey, MarketMetrics>;

@@ -38,14 +38,14 @@ export default function SecurityPage() {
           Quantora enforces strict Postgres Row-Level Security (RLS) on all backtest runs, strategy code repositories, and proprietary research notes.
         </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-1 text-xs">
-          {(["admin", "pro_researcher", "researcher", "student", "guest"] as UserRole[]).map((r) => (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
+          {(["admin", "pro_researcher", "researcher", "trader"] as UserRole[]).map((r) => (
             <button
               key={r}
               onClick={() => setRole(r)}
               className={`p-3 rounded border text-left transition-colors capitalize ${
                 user.role === r
-                  ? "bg-[#101318] border-[#7868FF] text-[#F4F5F7]"
+                  ? "bg-[#101318] border-[#00E599] text-[#F4F5F7]"
                   : "bg-[#080A0D] border-[#20252C] text-[#68717C] hover:text-[#A8AFB8]"
               }`}
             >
@@ -56,10 +56,8 @@ export default function SecurityPage() {
                   : r === "pro_researcher"
                   ? "50×50 grid, unlimited AI"
                   : r === "researcher"
-                  ? "Execute backtests & strategies"
-                  : r === "student"
-                  ? "Access learning sandbox"
-                  : "Read-only view"}
+                  ? "Execute backtests & 3D manifolds"
+                  : "Live paper trading & order book"}
               </div>
             </button>
           ))}

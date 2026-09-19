@@ -403,10 +403,5 @@ export const ROBUSTNESS_GRID: RobustnessPoint[] = [
 // -------------------------------------------------------------
 // 7. REAL-TIME ACTIVITY STREAM
 // -------------------------------------------------------------
-export const DEMO_ACTIVITIES = [
-  { id: "act-1", time: "22:04", title: "Backtest completed", detail: "BTC SMA 20/50 (+34.2% Return, 1.42 Sharpe)", type: "backtest" },
-  { id: "act-2", time: "22:03", title: "Robustness experiment finished", detail: "400 parameter combinations simulated across 2019–2026", type: "robustness" },
-  { id: "act-3", time: "22:01", title: "Regime analysis updated", detail: "5 macro regimes detected with Markov transition matrix", type: "regime" },
-  { id: "act-4", time: "21:58", title: "Market X-Ray refreshed", detail: "Cross-asset correlation matrix computed (6 edges calibrated)", type: "xray" },
-  { id: "act-5", time: "21:45", title: "Integrity audit passed", detail: "0 look-ahead leakages • T+1 execution latency verified", type: "integrity" },
-];
+export * from "./activities";
+

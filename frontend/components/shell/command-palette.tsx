@@ -39,7 +39,7 @@ const COMMANDS: CommandItem[] = [
   { id: "nav-portfolio", category: "Navigation", title: "Live Portfolio Analytics", subtitle: "Sharpe, Sortino, VaR & asset allocation", href: "/app/trade/portfolio", icon: Layers },
   { id: "nav-learn", category: "Navigation", title: "Quantora Academy & AI Tutor", subtitle: "Structured quant curriculum with interactive quizzes", href: "/app/learn", icon: BookOpen },
   { id: "nav-play", category: "Navigation", title: "Market Scenarios & Arena", subtitle: "Simulated volatility shocks and competitive replay", href: "/app/play", icon: Trophy },
-  { id: "nav-copilot", category: "Navigation", title: "Evidence-Bound Copilot", subtitle: "Structured quantitative reasoning & research tools", href: "/app/assist/copilot", icon: Bot },
+  { id: "nav-copilot", category: "Navigation", title: "Featherless AI Assistant", subtitle: "Structured quantitative reasoning & research tools", href: "/app/assist/copilot", icon: Bot },
 
   // Assets
   { id: "asset-nvda", category: "Assets", title: "NVIDIA (NVDA)", subtitle: "$124.75 · Semiconductor / AI Hardware Leader", href: "/app/markets/asset/NVDA", icon: TrendingUp },

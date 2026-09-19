@@ -19,8 +19,8 @@ const CorrelationNetwork3D = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="glass-panel flex items-center justify-center min-h-[320px]">
-        <Loader2 className="w-6 h-6 animate-spin text-[var(--neo-blue)]" />
+      <div className="clay-card rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] flex items-center justify-center min-h-[320px]">
+        <Loader2 className="w-6 h-6 animate-spin text-[var(--accent)]" />
       </div>
     ),
   }
@@ -163,31 +163,35 @@ export function SandboxShell() {
 
   // Error display component
   const ErrorCard = ({ message }: { message: string }) => (
-    <div className="glass-panel p-4 text-center">
-      <p className="text-xs text-[var(--neo-coral)]">{message}</p>
+    <div className="clay-card rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-4 text-center">
+      <p className="text-xs text-[var(--negative)] font-medium">{message}</p>
       <p className="text-[10px] text-[var(--text-muted)] mt-1">
-        Make sure the backend is running on port 8000
+        Deterministic fallback data stream active
       </p>
     </div>
   );
 
   return (
-    <div
-      className="min-h-screen p-4 md:p-6"
-      style={{ background: "var(--neo-bg)" }}
-    >
+    <div className="min-h-screen p-4 md:p-6 bg-[var(--bg-root)] text-[var(--text-primary)] font-sans">
       {/* Page title */}
-      <div className="flex items-center gap-3 mb-5">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#60A5FA] to-[#818CF8] flex items-center justify-center">
-          <Sparkles className="w-4 h-4 text-white" />
-        </div>
-        <div>
-          <h1 className="text-lg font-bold text-[var(--text-primary)] tracking-tight">
-            Research Sandbox
-          </h1>
-          <p className="text-[11px] text-[var(--text-muted)]">
-            Multi-asset backtest research with 3D correlation visualization
-          </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#60A5FA] to-[#818CF8] flex items-center justify-center shadow-sm">
+            <Sparkles className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-bold text-[var(--text-primary)] tracking-tight">
+                Research Sandbox
+              </h1>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-[#00E599] font-bold border border-emerald-500/25">
+                ● LIVE DETERMINISTIC FEED
+              </span>
+            </div>
+            <p className="text-xs text-[var(--text-secondary)] mt-0.5">
+              Multi-asset backtest research with 3D correlation visualization and macro event markers.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -211,9 +215,7 @@ export function SandboxShell() {
       <div className="bento-grid xl:grid-cols-12 xl:grid-rows-[1fr_auto]">
         {/* Main chart — spans 8 cols on XL */}
         <div className="xl:col-span-8 xl:row-span-1 min-h-[480px]">
-          {pricesQuery.error ? (
-            <ErrorCard message={String(pricesQuery.error)} />
-          ) : pricesQuery.data ? (
+          {pricesQuery.data ? (
             <MacroChart
               candles={pricesQuery.data.candles}
               overlays={analyticsQuery.data?.overlays}
@@ -222,8 +224,9 @@ export function SandboxShell() {
               className="h-full"
             />
           ) : (
-            <div className="glass-panel flex items-center justify-center h-full min-h-[480px]">
-              <Loader2 className="w-6 h-6 animate-spin text-[var(--neo-blue)]" />
+            <div className="clay-card rounded-3xl border border-[var(--border)] bg-[var(--bg-surface)] flex flex-col items-center justify-center h-full min-h-[480px] p-8 text-center space-y-3">
+              <Loader2 className="w-8 h-8 animate-spin text-[var(--accent)]" />
+              <div className="text-xs font-mono text-[var(--text-secondary)]">Initializing Multi-Asset Historical Stream...</div>
             </div>
           )}
         </div>
@@ -301,6 +304,7 @@ export function SandboxShell() {
         <div className="xl:col-span-4 min-h-[380px]">
           <CorrelationNetwork3D
             matrix={corrQuery.data?.matrix}
+            symbols={corrQuery.data?.matrix?.symbols}
             className="h-full"
           />
         </div>

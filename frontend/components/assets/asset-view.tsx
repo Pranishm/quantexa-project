@@ -24,7 +24,7 @@ import {
 import { QuantoraChart } from "@/components/charts/quantora-chart";
 
 
-export type AssetKey = "bitcoin" | "solana" | "gold" | "nvidia";
+export type AssetKey = "bitcoin" | "solana" | "gold" | "nvidia" | "1inch";
 
 interface AssetConfig {
   key: AssetKey;
@@ -103,6 +103,21 @@ const ASSET_REGISTRY: Record<AssetKey, AssetConfig> = {
     benchmarkSymbol: "NVDA",
     tabs: ["Price", "Technical", "Fundamental", "Risk", "Research"],
   },
+  "1inch": {
+    key: "1inch",
+    name: "1INCH NETWORK",
+    symbol: "1INCH",
+    ticker: "1INCH / USD",
+    route: "/app/assets/1inch",
+    price: "$0.0971",
+    change: "+7.27%",
+    up: true,
+    volume24h: "$28.4M",
+    marketCap: "$124.8M",
+    assetClass: "DEX Routing Protocol / DeFi",
+    benchmarkSymbol: "1INCH-USD",
+    tabs: ["Price", "Technical", "Risk", "On-Chain", "Research"],
+  },
 };
 
 
@@ -121,11 +136,12 @@ export function AssetWorkstation({ assetKey }: { assetKey: AssetKey }) {
   }, [asset, activeTab]);
 
   // Map asset key → chart symbol
-  const SYMBOL_MAP: Record<AssetKey, "BTC" | "SOL" | "GOLD" | "NVDA"> = {
+  const SYMBOL_MAP: Record<AssetKey, string> = {
     bitcoin: "BTC",
     solana: "SOL",
     gold: "GOLD",
     nvidia: "NVDA",
+    "1inch": "1INCH",
   };
   const chartSymbol = SYMBOL_MAP[assetKey];
 

@@ -91,18 +91,9 @@ const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
-    title: "LEARNING",
-    items: [
-      { id: "learn-academy", label: "Academy", href: "/app/learn", icon: BookOpen },
-      { id: "learn-tutor", label: "AI Tutor", href: "/app/learn/tutor", icon: Bot },
-      { id: "learn-challenges", label: "Challenges", href: "/app/learn/challenges", icon: Trophy },
-      { id: "learn-progress", label: "Progress", href: "/app/learn/progress", icon: CheckCircle2 },
-    ],
-  },
-  {
     title: "INTELLIGENCE",
     items: [
-      { id: "assist-copilot", label: "Copilot", href: "/app/assist/copilot", icon: Bot },
+      { id: "assist-copilot", label: "Featherless AI", href: "/app/assist/copilot", icon: Bot },
       { id: "assist-voice", label: "Voice", href: "/app/assist/voice", icon: Mic },
       { id: "assist-screen", label: "Screen AI", href: "/app/assist/screen", icon: MonitorPlay },
       { id: "assist-alerts", label: "Alerts", href: "/app/assist/alerts", icon: Bell },
@@ -118,15 +109,15 @@ const NAV_SECTIONS: NavSection[] = [
 ];
 
 function getRoleNavSections(role: UserRole): NavSection[] {
-  if (role === "student") {
+  if (role === "trader") {
     return [
       {
-        title: "LEARNING",
+        title: "EXECUTION DESK",
         items: [
-          { id: "learn-home", label: "Academy Home", href: "/app/overview", icon: BookOpen },
-          { id: "learn-tutor", label: "AI Tutor", href: "/app/learn/tutor", icon: Bot },
-          { id: "learn-challenges", label: "Challenges", href: "/app/learn/challenges", icon: Trophy },
-          { id: "learn-progress", label: "Progress", href: "/app/learn/progress", icon: CheckCircle2 },
+          { id: "trader-overview", label: "Overview", href: "/app/overview", icon: TrendingUp },
+          { id: "trader-paper", label: "Paper Trading ($100k)", href: "/app/trade/paper", icon: BookOpen },
+          { id: "trader-markets", label: "Live Markets", href: "/app/markets", icon: BarChart3 },
+          { id: "trader-signals", label: "Signal Engine", href: "/app/research/strategy-lab", icon: Bot },
         ],
       },
       {
@@ -137,6 +128,7 @@ function getRoleNavSections(role: UserRole): NavSection[] {
           { id: "asset-sol", label: "Solana (SOL)", href: "/app/assets/solana", icon: Layers },
           { id: "asset-gold", label: "Gold (XAU)", href: "/app/assets/gold", icon: Layers },
           { id: "asset-nvda", label: "NVIDIA (NVDA)", href: "/app/assets/nvidia", icon: Layers },
+          { id: "asset-1inch", label: "1inch (1INCH)", href: "/app/assets/1inch", icon: Layers },
         ],
       },
       {
@@ -178,7 +170,7 @@ function getRoleNavSections(role: UserRole): NavSection[] {
           { id: "guest-overview", label: "Market Overview", href: "/app/overview", icon: Layers },
           { id: "guest-markets", label: "Markets", href: "/app/markets", icon: TrendingUp },
           { id: "guest-btc", label: "Demo Chart (BTC)", href: "/app/assets/bitcoin", icon: BarChart3 },
-          { id: "guest-learn", label: "Academy Preview", href: "/app/learn", icon: BookOpen },
+          { id: "guest-sandbox", label: "Research Sandbox", href: "/app/sandbox", icon: Sparkles },
         ],
       },
     ];
@@ -259,6 +251,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     if (pathname.startsWith("/app/assets/solana")) return ["Markets", "Solana (SOL / USD)"];
     if (pathname.startsWith("/app/assets/gold")) return ["Markets", "Gold (XAU / USD)"];
     if (pathname.startsWith("/app/assets/nvidia")) return ["Markets", "NVIDIA (NVDA)"];
+    if (pathname.startsWith("/app/assets/1inch")) return ["Markets", "1inch (1INCH / USD)"];
     if (pathname.startsWith("/app/markets/cross-asset")) return ["Overview", "Market X-Ray"];
     if (pathname.startsWith("/app/markets/screener")) return ["Markets", "Quantitative Screener"];
     if (pathname.startsWith("/app/markets/watchlists")) return ["Markets", "Watchlist"];
@@ -412,7 +405,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             Clay UI
           </button>
 
-          {/* Copilot Trigger */}
+          {/* Featherless AI Trigger */}
           <button
             onClick={() => setCopilotOpen(!copilotOpen)}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl border transition-all clay-button ${
@@ -420,10 +413,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                 ? "bg-[var(--accent)]/15 border-[var(--accent)] text-[var(--text-primary)]"
                 : "bg-[var(--bg-surface)] border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
             }`}
-            title="Toggle Quantora Copilot (⌘J)"
+            title="Toggle Quantora Featherless AI (⌘J)"
           >
             <Bot className="w-3.5 h-3.5 text-[var(--accent)]" />
-            <span className="hidden sm:inline text-[11px] font-medium">Copilot</span>
+            <span className="hidden sm:inline text-[11px] font-medium">Featherless AI</span>
           </button>
 
           {/* Notifications */}
@@ -468,11 +461,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </div>
                 {(
                   [
-                    { id: "guest" as UserRole, label: "Guest (Public Demo)", desc: "Public markets, preview mode" },
-                    { id: "student" as UserRole, label: "Student (Learning Lab)", desc: "Academy, AI Tutor, paper sandbox" },
-                    { id: "researcher" as UserRole, label: "Researcher (Default)", desc: "Factor models, 20×20 grid" },
-                    { id: "pro" as UserRole, label: "Pro Researcher", desc: "Unlimited AI, 50×50 grid, API" },
-                    { id: "admin" as UserRole, label: "Administrator", desc: "Governance, audits, monitors" },
+                    { id: "trader" as UserRole, label: "Quantitative Trader Desk", desc: "Live paper trading, order book, execution desk ($100k)" },
+                    { id: "admin" as UserRole, label: "System Administrator", desc: "Governance, telemetry audits, engine monitors" },
                   ] as const
                 ).map((r) => (
                   <button
@@ -677,6 +667,27 @@ export function AppShell({ children }: { children: ReactNode }) {
                 )}
               </div>
             </div>
+
+            {/* Made by Team Blaze IQ Badge */}
+            {!collapsed ? (
+              <div className="pt-1 px-0.5 text-center">
+                <div className="px-2 py-1.5 rounded-xl bg-[var(--bg-recessed)] border border-[var(--border)] text-[9px] text-[var(--text-muted)] font-mono">
+                  <div className="font-bold text-[var(--accent)] tracking-wider uppercase text-[8px] flex items-center justify-center gap-1">
+                    <span>⚡</span>
+                    <span>Made by Team Blaze IQ</span>
+                  </div>
+                  <div className="text-[7.5px] text-[var(--text-secondary)] mt-0.5 leading-snug tracking-tight">
+                    Sujan S · Pranish M · Varshan Karthik R · Eniyan CG · Naveen SS
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex justify-center pt-0.5" title="Made by Team Blaze IQ: Sujan S, Pranish M, Varshan Karthik R, Eniyan CG, Naveen SS">
+                <span className="text-[8px] font-bold font-mono px-1 py-0.5 rounded bg-[var(--bg-recessed)] text-[var(--accent)] border border-[var(--border)] cursor-help">
+                  ⚡IQ
+                </span>
+              </div>
+            )}
           </div>
         </aside>
 

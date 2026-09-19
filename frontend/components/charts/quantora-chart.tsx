@@ -58,6 +58,11 @@ import {
   Activity,
   Layers,
   Sliders,
+  Play,
+  Pause,
+  RotateCcw,
+  FastForward,
+  Radio,
 } from "lucide-react";
 
 import { IndicatorSettingsModal } from "./indicator-settings-dialog";
@@ -80,42 +85,42 @@ import {
 // ---------------------------------------------------------------------------
 function getChartColors(isDark: boolean) {
   return {
-    bg: isDark ? "#121518" : "#ECEEEA",
-    surface: isDark ? "#121518" : "#ECEEEA",
-    grid: isDark ? "#1e2226" : "#d4d8d2",
-    rule: isDark ? "#2c3035" : "#c4c9c1",
+    bg: isDark ? "#080A0D" : "#ECEEEA",
+    surface: isDark ? "#0D1013" : "#ECEEEA",
+    grid: isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.06)",
+    rule: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.1)",
     text: isDark ? "#969E9B" : "#626A66",
-    textPrimary: isDark ? "#F1F3F2" : "#171A19",
-    crosshair: isDark ? "#5a6165" : "#8A918D",
-    labelBg: isDark ? "#1B1F23" : "#D9DDD8",
-    upCandle: "#15956C",
-    downCandle: "#D94E5C",
-    upWick: "#15956C",
-    downWick: "#D94E5C",
-    upBorder: "#15956C",
-    downBorder: "#D94E5C",
-    volume: isDark ? "#1e2226" : "#d0d5ce",
-    volumeUp: "rgba(21,149,108,0.35)",
-    volumeDown: "rgba(217,78,92,0.35)",
-    sma20: "#8877FF",
+    textPrimary: isDark ? "#F2F4F3" : "#171A19",
+    crosshair: isDark ? "#00E599" : "#626A66",
+    labelBg: isDark ? "#171A1E" : "#D9DDD8",
+    upCandle: isDark ? "#00E599" : "#12966D",
+    downCandle: isDark ? "#FF3B69" : "#D94E5C",
+    upWick: isDark ? "#00E599" : "#12966D",
+    downWick: isDark ? "#FF3B69" : "#D94E5C",
+    upBorder: isDark ? "#00E599" : "#12966D",
+    downBorder: isDark ? "#FF3B69" : "#D94E5C",
+    volume: isDark ? "#171A1E" : "#d0d5ce",
+    volumeUp: isDark ? "rgba(0, 229, 153, 0.35)" : "rgba(18, 150, 109, 0.35)",
+    volumeDown: isDark ? "rgba(255, 59, 105, 0.35)" : "rgba(217, 78, 92, 0.35)",
+    sma20: "#8776FF",
     sma50: "#E4B64D",
-    ema200: "#FF6572",
-    bbandsUpper: "rgba(136,119,255,0.5)",
-    bbandsLower: "rgba(136,119,255,0.5)",
-    bbandsMid: "rgba(136,119,255,0.25)",
-    rsiLine: "#8877FF",
-    rsiOb: "rgba(217,78,92,0.2)",
-    rsiOs: "rgba(21,149,108,0.2)",
-    macdLine: "#8877FF",
+    ema200: "#FF3B69",
+    bbandsUpper: "rgba(135, 118, 255, 0.5)",
+    bbandsLower: "rgba(135, 118, 255, 0.5)",
+    bbandsMid: "rgba(135, 118, 255, 0.25)",
+    rsiLine: "#8776FF",
+    rsiOb: "rgba(255, 59, 105, 0.2)",
+    rsiOs: "rgba(0, 229, 153, 0.2)",
+    macdLine: "#8776FF",
     macdSignal: "#E4B64D",
-    macdHistPos: "rgba(21,149,108,0.7)",
-    macdHistNeg: "rgba(217,78,92,0.7)",
-    regimeBull: "rgba(21,149,108,0.05)",
-    regimeBear: "rgba(217,78,92,0.05)",
-    regimeRange: "rgba(228,182,77,0.05)",
-    tradeBuy: "#15956C",
-    tradeSell: "#D94E5C",
-    benchmark: "rgba(150,158,155,0.6)",
+    macdHistPos: "rgba(0, 229, 153, 0.7)",
+    macdHistNeg: "rgba(255, 59, 105, 0.7)",
+    regimeBull: "rgba(0, 229, 153, 0.06)",
+    regimeBear: "rgba(255, 59, 105, 0.06)",
+    regimeRange: "rgba(228, 182, 77, 0.06)",
+    tradeBuy: "#00E599",
+    tradeSell: "#FF3B69",
+    benchmark: "rgba(150, 158, 155, 0.6)",
   };
 }
 
@@ -135,19 +140,26 @@ interface QuantoraChartProps {
   defaultMode?: ChartMode;
   defaultIndicators?: ActiveIndicator[];
   height?: number;
+  autoPlay?: boolean;
 }
 
 // ---------------------------------------------------------------------------
 // Format helpers
 // ---------------------------------------------------------------------------
 function fmt(v: number, symbol: string): string {
+  if (symbol === "1INCH" || (v < 1 && v > 0)) {
+    return v < 1 ? v.toFixed(4) : v.toFixed(3);
+  }
   if (symbol === "BTC") {
     return v >= 1000 ? `${(v / 1000).toFixed(1)}K` : v.toFixed(2);
   }
   return v >= 1000 ? `${(v / 1000).toFixed(1)}K` : v.toFixed(2);
 }
 
-function fmtFull(v: number): string {
+function fmtFull(v: number, symbol?: string): string {
+  if (symbol === "1INCH" || (v < 1 && v > 0)) {
+    return v.toFixed(4);
+  }
   if (v >= 1000) return v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   return v.toFixed(2);
 }
@@ -162,6 +174,12 @@ function fmtVol(v: number): string {
 function fmtDate(d: string): string {
   const dt = new Date(d + "T00:00:00Z");
   return dt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+}
+
+function getNextDate(dateStr: string): string {
+  const d = new Date(dateStr + "T00:00:00Z");
+  d.setUTCDate(d.getUTCDate() + 1);
+  return d.toISOString().slice(0, 10);
 }
 
 // ---------------------------------------------------------------------------
@@ -183,6 +201,7 @@ export function QuantoraChart({
   defaultMode = "CANDLE",
   defaultIndicators = ["SMA20", "SMA50", "VOLUME"],
   height = 480,
+  autoPlay = false,
 }: QuantoraChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
@@ -196,6 +215,9 @@ export function QuantoraChart({
   const macdPaneRef = useRef<HTMLDivElement>(null);
   const readoutRef = useRef<HTMLDivElement>(null);
   const tradePopupRef = useRef<HTMLDivElement>(null);
+  const mainSeriesRef = useRef<ISeriesApi<any> | null>(null);
+  const volumeSeriesRef = useRef<ISeriesApi<any> | null>(null);
+  const liveBarRef = useRef<OHLCVBar | null>(null);
 
   const [mode, setMode] = useState<ChartMode>(defaultMode);
   const [timeframe, setTimeframe] = useState<Timeframe>(defaultTimeframe);
@@ -209,6 +231,14 @@ export function QuantoraChart({
   const [hoveredTrade, setHoveredTrade] = useState<{ trade: BacktestTrade; x: number; y: number } | null>(null);
   const [indicatorModalOpen, setIndicatorModalOpen] = useState(false);
   const [indicatorConfigs, setIndicatorConfigs] = useState<IndicatorConfig[]>(DEFAULT_INDICATOR_CONFIGS);
+
+  // Live playback & moving graph state
+  const [isPlaying, setIsPlaying] = useState(autoPlay ?? false);
+  const [playSpeed, setPlaySpeed] = useState<number>(1);
+  const [playIndex, setPlayIndex] = useState<number>(0);
+  const [isLiveMode, setIsLiveMode] = useState(false);
+  const [livePrice, setLivePrice] = useState<number | null>(null);
+  const [tickFlash, setTickFlash] = useState<"up" | "down" | null>(null);
 
   const chartTypeMenuRef = useRef<HTMLDivElement>(null);
   const indicatorsMenuRef = useRef<HTMLDivElement>(null);
@@ -248,6 +278,12 @@ export function QuantoraChart({
   const allBars = useMemo(() => ALL_OHLCV[symbol] ?? ALL_OHLCV["BTC"], [symbol]);
   const bars = useMemo(() => barsByTimeframe(allBars, timeframe), [allBars, timeframe]);
 
+  // Sync playIndex whenever bars change
+  useEffect(() => {
+    setPlayIndex(bars.length);
+    liveBarRef.current = null;
+  }, [bars, symbol, timeframe]);
+
   // Indicator values computed from the filtered bars
   const sma20Values = useMemo(() => sma(bars, 20), [bars]);
   const sma50Values = useMemo(() => sma(bars, 50), [bars]);
@@ -265,6 +301,236 @@ export function QuantoraChart({
   const rsiHeight = hasRSI ? 100 : 0;
   const macdHeight = hasMACD ? 100 : 0;
   const mainH = height; // main pane has its own height
+
+  // Stable Crosshair Readout Painter
+  const paintReadout = useCallback((b: OHLCVBar | null) => {
+    const el = readoutRef.current;
+    if (!el || !b) return;
+    const changeAmt = b.close - b.open;
+    const changePct = ((changeAmt / (b.open || 0.0001)) * 100).toFixed(2);
+    const isUp = changeAmt >= 0;
+    const sign = isUp ? "+" : "";
+    const prec = (symbol === "1INCH" || b.close < 1) ? 4 : 2;
+    el.innerHTML = `
+      <span class="text-[var(--text-primary)] font-bold text-sm tabular-nums">${symbol === "1INCH" ? "$" + b.close.toFixed(4) : "$" + fmtFull(b.close)}</span>
+      <span class="${isUp ? "text-[#15956C] dark:text-[#35D39A]" : "text-[#D94E5C] dark:text-[#FF6572]"} font-semibold text-xs tabular-nums">
+        ${sign}${changeAmt.toFixed(prec)} (${sign}${changePct}%)
+      </span>
+      <span class="text-[var(--text-muted)] text-xs">O <b class="text-[var(--text-secondary)]">${b.open.toFixed(prec)}</b></span>
+      <span class="text-[var(--text-muted)] text-xs">H <b class="text-[var(--text-secondary)]">${b.high.toFixed(prec)}</b></span>
+      <span class="text-[var(--text-muted)] text-xs">L <b class="text-[var(--text-secondary)]">${b.low.toFixed(prec)}</b></span>
+      <span class="text-[var(--text-muted)] text-xs">C <b class="text-[var(--text-secondary)]">${b.close.toFixed(prec)}</b></span>
+      <span class="text-[var(--text-muted)] text-xs">V <b class="text-[var(--text-secondary)]">${fmtVol(b.volume)}</b></span>
+    `;
+  }, [symbol]);
+
+  // Scrubber, Rewind, Step, and Play Handlers
+  const handleScrub = useCallback((targetIndex: number) => {
+    setIsPlaying(false);
+    setPlayIndex(targetIndex);
+    liveBarRef.current = null;
+    const sliced = bars.slice(0, targetIndex);
+    if (!mainSeriesRef.current || sliced.length === 0) return;
+
+    const toTime = (d: string): Time => d as Time;
+    if (mode === "CANDLE") {
+      mainSeriesRef.current.setData(sliced.map((b) => ({
+        time: toTime(b.time), open: b.open, high: b.high, low: b.low, close: b.close,
+      })));
+    } else if (mode === "BAR") {
+      mainSeriesRef.current.setData(sliced.map((b) => ({
+        time: toTime(b.time), open: b.open, high: b.high, low: b.low, close: b.close,
+      })));
+    } else {
+      mainSeriesRef.current.setData(sliced.map((b) => ({
+        time: toTime(b.time), value: b.close,
+      })));
+    }
+
+    if (volumeSeriesRef.current) {
+      const C = getChartColors(isDark);
+      volumeSeriesRef.current.setData(sliced.map((b) => ({
+        time: toTime(b.time),
+        value: b.volume,
+        color: b.close >= b.open ? C.volumeUp : C.volumeDown,
+      })));
+    }
+
+    safe(() => chartRef.current?.timeScale().scrollToPosition(3, false));
+    safe(() => volumeChartRef.current?.timeScale().scrollToPosition(3, false));
+    safe(() => rsiChartRef.current?.timeScale().scrollToPosition(3, false));
+    safe(() => macdChartRef.current?.timeScale().scrollToPosition(3, false));
+
+    const last = sliced[sliced.length - 1];
+    if (last) {
+      paintReadout(last);
+      setLivePrice(last.close);
+    }
+  }, [bars, mode, isDark, paintReadout]);
+
+  const handleRewind = useCallback(() => {
+    const rewindPoint = Math.max(25, Math.floor(bars.length * 0.25));
+    handleScrub(rewindPoint);
+  }, [bars.length, handleScrub]);
+
+  const handleStep = useCallback(() => {
+    if (playIndex < bars.length) {
+      handleScrub(playIndex + 1);
+    }
+  }, [playIndex, bars.length, handleScrub]);
+
+  const togglePlay = useCallback(() => {
+    setIsPlaying((prev: boolean) => {
+      const next = !prev;
+      if (next && playIndex >= bars.length) {
+        handleScrub(Math.max(25, bars.length - 120));
+      }
+      return next;
+    });
+  }, [playIndex, bars.length, handleScrub]);
+
+  // LIVE PLAYBACK & MOVING GRAPH LOOP
+  useEffect(() => {
+    if (!isPlaying && !isLiveMode) return;
+
+    const intervalMs = Math.max(40, Math.floor(550 / playSpeed));
+    const C = getChartColors(isDark);
+    const toTime = (d: string): Time => d as Time;
+
+    const timer = setInterval(() => {
+      setPlayIndex((currIdx) => {
+        // Phase 1: Replaying historical bars
+        if (currIdx < bars.length) {
+          const nextIdx = currIdx + 1;
+          const nextBar = bars[nextIdx - 1];
+          if (nextBar && mainSeriesRef.current) {
+            if (mode === "CANDLE" || mode === "BAR") {
+              mainSeriesRef.current.update({
+                time: toTime(nextBar.time),
+                open: nextBar.open,
+                high: nextBar.high,
+                low: nextBar.low,
+                close: nextBar.close,
+              });
+            } else {
+              mainSeriesRef.current.update({
+                time: toTime(nextBar.time),
+                value: nextBar.close,
+              });
+            }
+            if (volumeSeriesRef.current) {
+              volumeSeriesRef.current.update({
+                time: toTime(nextBar.time),
+                value: nextBar.volume,
+                color: nextBar.close >= nextBar.open ? C.volumeUp : C.volumeDown,
+              });
+            }
+            // PHYSICALLY GLIDE / AUTO-SCROLL CHART TO SHOW LATEST MOVEMENT
+            safe(() => chartRef.current?.timeScale().scrollToPosition(3, false));
+            safe(() => volumeChartRef.current?.timeScale().scrollToPosition(3, false));
+            safe(() => rsiChartRef.current?.timeScale().scrollToPosition(3, false));
+            safe(() => macdChartRef.current?.timeScale().scrollToPosition(3, false));
+
+            paintReadout(nextBar);
+            setLivePrice(nextBar.close);
+            setTickFlash(nextBar.close >= nextBar.open ? "up" : "down");
+          }
+          return nextIdx;
+        }
+
+        // Phase 2: Real-time Live Market Ticking / Continuous Candle Formation
+        const baseBar = liveBarRef.current || bars[bars.length - 1];
+        if (!baseBar) return currIdx;
+
+        const volMult = symbol === "1INCH" ? 0.007 : 0.0025;
+        const pctDelta = (Math.random() - 0.49) * volMult;
+        const newClose = Math.max(0.0001, baseBar.close * (1 + pctDelta));
+        const formattedClose = Number(newClose.toFixed(symbol === "1INCH" ? 4 : 2));
+
+        const ticks = (liveBarRef.current as any)?._ticks || 0;
+        if (ticks < 6) {
+          const updatedBar: OHLCVBar = {
+            ...baseBar,
+            high: Math.max(baseBar.high, formattedClose),
+            low: Math.min(baseBar.low, formattedClose),
+            close: formattedClose,
+            volume: baseBar.volume + Math.floor(Math.random() * 2000 + 400),
+          };
+          (updatedBar as any)._ticks = ticks + 1;
+          liveBarRef.current = updatedBar;
+
+          if (mainSeriesRef.current) {
+            if (mode === "CANDLE" || mode === "BAR") {
+              mainSeriesRef.current.update({
+                time: toTime(updatedBar.time),
+                open: updatedBar.open,
+                high: updatedBar.high,
+                low: updatedBar.low,
+                close: updatedBar.close,
+              });
+            } else {
+              mainSeriesRef.current.update({
+                time: toTime(updatedBar.time),
+                value: updatedBar.close,
+              });
+            }
+          }
+          paintReadout(updatedBar);
+          setLivePrice(formattedClose);
+          setTickFlash(pctDelta >= 0 ? "up" : "down");
+        } else {
+          // Roll over to a brand new printed candle & scroll
+          const nextDate = getNextDate(baseBar.time);
+          const newBar: OHLCVBar = {
+            time: nextDate,
+            open: formattedClose,
+            high: formattedClose,
+            low: formattedClose,
+            close: formattedClose,
+            volume: Math.floor(Math.random() * 3000 + 1000),
+          };
+          (newBar as any)._ticks = 1;
+          liveBarRef.current = newBar;
+
+          if (mainSeriesRef.current) {
+            if (mode === "CANDLE" || mode === "BAR") {
+              mainSeriesRef.current.update({
+                time: toTime(newBar.time),
+                open: newBar.open,
+                high: newBar.high,
+                low: newBar.low,
+                close: newBar.close,
+              });
+            } else {
+              mainSeriesRef.current.update({
+                time: toTime(newBar.time),
+                value: newBar.close,
+              });
+            }
+            if (volumeSeriesRef.current) {
+              volumeSeriesRef.current.update({
+                time: toTime(newBar.time),
+                value: newBar.volume,
+                color: C.volumeUp,
+              });
+            }
+          }
+          safe(() => chartRef.current?.timeScale().scrollToPosition(3, false));
+          safe(() => volumeChartRef.current?.timeScale().scrollToPosition(3, false));
+          safe(() => rsiChartRef.current?.timeScale().scrollToPosition(3, false));
+          safe(() => macdChartRef.current?.timeScale().scrollToPosition(3, false));
+
+          paintReadout(newBar);
+          setLivePrice(formattedClose);
+          setTickFlash("up");
+        }
+
+        return currIdx;
+      });
+    }, intervalMs);
+
+    return () => clearInterval(timer);
+  }, [isPlaying, isLiveMode, playSpeed, bars, mode, symbol, isDark, paintReadout]);
 
   // ---------------------------------------------------------------------------
   // Build / rebuild charts whenever data or config changes
@@ -323,6 +589,16 @@ export function QuantoraChart({
 
     let mainSeries: ISeriesApi<SeriesType, Time>;
 
+    const seriesPriceFormat = (symbol === "1INCH" || (bars[0]?.close && bars[0].close < 1)) ? {
+      type: "price" as const,
+      precision: 4,
+      minMove: 0.0001,
+    } : {
+      type: "price" as const,
+      precision: 2,
+      minMove: 0.01,
+    };
+
     if (mode === "CANDLE") {
       const cs = main.addSeries(CandlestickSeries, {
         upColor: C.upCandle,
@@ -333,6 +609,7 @@ export function QuantoraChart({
         wickDownColor: C.downWick,
         borderVisible: true,
         priceLineVisible: false,
+        priceFormat: seriesPriceFormat,
       });
       cs.setData(bars.map((b): CandlestickData<Time> => ({
         time: toTime(b.time), open: b.open, high: b.high, low: b.low, close: b.close,
@@ -345,6 +622,7 @@ export function QuantoraChart({
         openVisible: true,
         thinBars: false,
         priceLineVisible: false,
+        priceFormat: seriesPriceFormat,
       });
       bs.setData(bars.map((b): BarData<Time> => ({
         time: toTime(b.time), open: b.open, high: b.high, low: b.low, close: b.close,
@@ -358,6 +636,7 @@ export function QuantoraChart({
         crosshairMarkerRadius: 4,
         crosshairMarkerBorderColor: C.bg,
         crosshairMarkerBorderWidth: 2,
+        priceFormat: seriesPriceFormat,
       });
       ls.setData(bars.map((b): LineData<Time> => ({ time: toTime(b.time), value: b.close })));
       mainSeries = ls;
@@ -370,6 +649,7 @@ export function QuantoraChart({
         priceLineVisible: false,
         crosshairMarkerRadius: 4,
         crosshairMarkerBorderColor: C.bg,
+        priceFormat: seriesPriceFormat,
       });
       as.setData(bars.map((b): AreaData<Time> => ({ time: toTime(b.time), value: b.close })));
       mainSeries = as;
@@ -386,10 +666,12 @@ export function QuantoraChart({
         bottomFillColor2: isDark ? "rgba(255, 101, 114, 0.3)" : "rgba(217, 78, 92, 0.3)",
         lineWidth: 2,
         priceLineVisible: false,
+        priceFormat: seriesPriceFormat,
       });
       bls.setData(bars.map((b): BaselineData<Time> => ({ time: toTime(b.time), value: b.close })));
       mainSeries = bls;
     }
+    mainSeriesRef.current = mainSeries;
 
     // ----- OVERLAYS -----
     const disposers: (() => void)[] = [];
@@ -471,26 +753,8 @@ export function QuantoraChart({
     const dateIndex = new Map(bars.map((b, i) => [b.time, i]));
     const lastBar = bars[bars.length - 1];
 
-    function paintReadout(b: OHLCVBar | null) {
-      const el = readoutRef.current;
-      if (!el || !b) return;
-      const changeAmt = b.close - b.open;
-      const changePct = ((changeAmt / b.open) * 100).toFixed(2);
-      const isUp = changeAmt >= 0;
-      el.innerHTML = `
-        <span class="text-[var(--text-primary)] font-bold text-sm tabular-nums">${fmtFull(b.close)}</span>
-        <span class="${isUp ? "text-[#15956C] dark:text-[#35D39A]" : "text-[#D94E5C] dark:text-[#FF6572]"} font-semibold text-xs tabular-nums">
-          ${isUp ? "+" : ""}${changeAmt.toFixed(2)} (${isUp ? "+" : ""}${changePct}%)
-        </span>
-        <span class="text-[var(--text-muted)] text-xs">O <b class="text-[var(--text-secondary)]">${fmtFull(b.open)}</b></span>
-        <span class="text-[var(--text-muted)] text-xs">H <b class="text-[var(--text-secondary)]">${fmtFull(b.high)}</b></span>
-        <span class="text-[var(--text-muted)] text-xs">L <b class="text-[var(--text-secondary)]">${fmtFull(b.low)}</b></span>
-        <span class="text-[var(--text-muted)] text-xs">C <b class="text-[var(--text-secondary)]">${fmtFull(b.close)}</b></span>
-        <span class="text-[var(--text-muted)] text-xs">V <b class="text-[var(--text-secondary)]">${fmtVol(b.volume)}</b></span>
-      `;
-    }
-
     paintReadout(lastBar);
+    setLivePrice(lastBar ? lastBar.close : null);
 
     const onMove = (param: MouseEventParams<Time>) => {
       if (!param.time) { paintReadout(lastBar); return; }
@@ -547,6 +811,7 @@ export function QuantoraChart({
         value: b.volume,
         color: b.close >= b.open ? C.volumeUp : C.volumeDown,
       })));
+      volumeSeriesRef.current = vs;
 
       // Sync timescales
       const syncVol = (range: any) => {
@@ -667,10 +932,12 @@ export function QuantoraChart({
       volumeChartRef.current = null;
       rsiChartRef.current = null;
       macdChartRef.current = null;
+      mainSeriesRef.current = null;
+      volumeSeriesRef.current = null;
     };
   }, [bars, mode, activeIndicators, isDark, symbol, showTrades, trades,
       sma20Values, sma50Values, ema200Values, bbValues, rsiValues, macdValues,
-      mainH, volHeight, rsiHeight, macdHeight, hasVol, hasRSI, hasMACD]);
+      mainH, volHeight, rsiHeight, macdHeight, hasVol, hasRSI, hasMACD, paintReadout]);
 
   // ---------------------------------------------------------------------------
   // Current price info
@@ -683,9 +950,11 @@ export function QuantoraChart({
 
   const assetNames: Record<string, string> = {
     BTC: "Bitcoin", SOL: "Solana", GOLD: "Gold", NVDA: "NVIDIA",
+    "1INCH": "1inch Network", ETH: "Ethereum",
   };
   const pairNames: Record<string, string> = {
     BTC: "BTC/USD", SOL: "SOL/USD", GOLD: "GOLD/USD", NVDA: "NVDA",
+    "1INCH": "1INCH/USD", ETH: "ETH/USD",
   };
 
   const CHART_TYPE_ICONS = {
@@ -832,6 +1101,91 @@ export function QuantoraChart({
         </div>
       </div>
 
+      {/* ── LIVE PLAYING & MOVING GRAPH CONTROLLER BAR ──────────────── */}
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 border-b border-[var(--border)] bg-[var(--bg-recessed)]/50 text-xs font-mono">
+        <div className="flex items-center gap-2">
+          {/* Play / Pause Toggle */}
+          <button
+            onClick={togglePlay}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all ${
+              isPlaying
+                ? "bg-[#00E599] text-black shadow-[0_0_14px_rgba(0,229,153,0.5)] scale-[1.02]"
+                : "clay-button text-[var(--text-primary)] border border-[var(--border)] hover:border-[var(--accent)]"
+            }`}
+          >
+            {isPlaying ? <Pause className="w-3.5 h-3.5 fill-current" /> : <Play className="w-3.5 h-3.5 fill-current" />}
+            <span>{isPlaying ? "PAUSE" : "PLAY LIVE"}</span>
+          </button>
+
+          {/* Rewind */}
+          <button
+            onClick={handleRewind}
+            className="p-1.5 clay-button rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-[var(--border)] transition-colors"
+            title="Rewind to early history"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+          </button>
+
+          {/* Step Forward */}
+          <button
+            onClick={handleStep}
+            disabled={isPlaying}
+            className="p-1.5 clay-button rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-[var(--border)] disabled:opacity-40 transition-colors"
+            title="Step 1 bar forward"
+          >
+            <FastForward className="w-3.5 h-3.5" />
+          </button>
+
+          {/* Live Continuous Moving Mode */}
+          <button
+            onClick={() => setIsLiveMode((prev) => !prev)}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[10px] font-bold tracking-wider transition-all ${
+              isLiveMode
+                ? "bg-[#00E599]/15 text-[#00E599] border border-[#00E599]/40 shadow-[0_0_10px_rgba(0,229,153,0.2)]"
+                : "clay-button text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-[var(--border)]"
+            }`}
+          >
+            <span className={`w-2 h-2 rounded-full ${isLiveMode ? "bg-[#00E599] animate-ping" : "bg-zinc-500"}`} />
+            <span>{isLiveMode ? "LIVE MOVING ON" : "LIVE MOVING"}</span>
+          </button>
+        </div>
+
+        {/* Timeline Scrubber Slider */}
+        <div className="flex-1 max-w-sm sm:max-w-md flex items-center gap-2">
+          <span className="text-[10px] text-[var(--text-muted)] tabular-nums whitespace-nowrap min-w-[70px]">
+            {bars[Math.min(playIndex - 1, bars.length - 1)]?.time ?? ""}
+          </span>
+          <input
+            type="range"
+            min={20}
+            max={bars.length}
+            value={playIndex}
+            onChange={(e) => handleScrub(Number(e.target.value))}
+            className="w-full h-1.5 bg-[var(--bg-elevated)] rounded-lg appearance-none cursor-pointer accent-[var(--accent)]"
+          />
+          <span className="text-[10px] text-[var(--text-secondary)] tabular-nums whitespace-nowrap">
+            {playIndex}/{bars.length}
+          </span>
+        </div>
+
+        {/* Speed Controls */}
+        <div className="flex items-center gap-1 p-0.5 rounded-xl bg-[var(--bg-recessed)] border border-[var(--border)] text-[10px]">
+          {[0.5, 1, 2, 5, 10].map((spd) => (
+            <button
+              key={spd}
+              onClick={() => setPlaySpeed(spd)}
+              className={`px-2 py-0.5 rounded-lg transition-all ${
+                playSpeed === spd
+                  ? "bg-[var(--accent)] text-white font-bold shadow-sm"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              }`}
+            >
+              {spd}x
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* ── INDICATOR LEGEND ───────────────────────────────────── */}
       {(activeIndicators.has("SMA20") || activeIndicators.has("SMA50") || activeIndicators.has("EMA200") || activeIndicators.has("BB")) && (
         <div className="flex flex-wrap items-center gap-3 px-4 py-1.5 text-[10px] font-mono border-b border-[var(--border)] bg-[var(--bg-recessed)]/30">
@@ -895,16 +1249,24 @@ export function QuantoraChart({
 
       {/* ── FOOTER STATUS ──────────────────────────────────────── */}
       <div className="flex items-center justify-between px-4 py-2 border-t border-[var(--border)] text-[10px] font-mono text-[var(--text-muted)]">
-        <span>
-          <span className="w-1.5 h-1.5 rounded-full bg-[var(--positive)] inline-block mr-1.5 animate-pulse" />
-          DEMO STREAM · {fmtDate(lastBar?.time ?? "")}
+        <span className="flex items-center gap-1.5">
+          <span className={`w-2 h-2 rounded-full ${isPlaying || isLiveMode ? "bg-[var(--positive)] animate-ping" : "bg-zinc-500"}`} />
+          <span>{isPlaying ? `REPLAYING (${playSpeed}x) · BAR ${playIndex}/${bars.length}` : isLiveMode ? "LIVE MOVING STREAM" : "MARKET PAUSED"}</span>
+          <span className="text-[var(--text-secondary)]">· {fmtDate(bars[Math.min(playIndex - 1, bars.length - 1)]?.time ?? lastBar?.time ?? "")}</span>
         </span>
-        <span>
-          Vol {lastBar ? fmtVol(lastBar.volume) : "—"}
-          {" · "}
-          {bars.length} bars
-          {" · "}
-          {timeframe}
+        <span className="flex items-center gap-2">
+          {livePrice !== null && (
+            <span className={`px-2 py-0.5 rounded font-bold text-xs transition-colors ${tickFlash === "up" ? "bg-[var(--positive)]/20 text-[var(--positive)]" : "bg-[var(--negative)]/20 text-[var(--negative)]"}`}>
+              ${symbol === "1INCH" ? livePrice.toFixed(4) : fmtFull(livePrice)}
+            </span>
+          )}
+          <span>
+            Vol {lastBar ? fmtVol(lastBar.volume) : "—"}
+            {" · "}
+            {bars.length} bars
+            {" · "}
+            {timeframe}
+          </span>
         </span>
       </div>
 

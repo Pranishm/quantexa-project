@@ -116,7 +116,7 @@ export default function DedicatedCopilotPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between border-b border-[#20252C] pb-4 gap-2">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-[#F4F5F7]">QUANTORA EVIDENCE COPILOT</h1>
+          <h1 className="text-xl font-bold tracking-tight text-[#F4F5F7]">QUANTORA FEATHERLESS AI</h1>
           <p className="text-xs text-[#A8AFB8] mt-0.5">
             Institutional quantitative research assistant bound to deterministic models and verified market data.
           </p>
@@ -231,7 +231,7 @@ export default function DedicatedCopilotPage() {
               handleSend();
             }
           }}
-          placeholder="Ask research questions (e.g. What changed in NVDA volatility this month?)..."
+          placeholder="Ask Featherless AI research questions (e.g. What changed in NVDA volatility this month?)..."
           className="flex-1 bg-transparent text-xs text-[#F4F5F7] placeholder-[#68717C] px-2 focus:outline-none"
         />
         <button

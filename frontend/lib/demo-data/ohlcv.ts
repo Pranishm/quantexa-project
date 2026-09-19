@@ -177,11 +177,29 @@ export const NVDA_OHLCV: OHLCVBar[] = anchorLastBar(
   178.25,
 );
 
+const ETH_REGIMES: Regime[] = [
+  { startDate: "2024-01-01", endDate: "2024-04-14", drift: 0.0022, vol: 0.035 },
+  { startDate: "2024-04-15", endDate: "2024-09-30", drift: -0.0006, vol: 0.045 },
+  { startDate: "2024-10-01", endDate: "2025-03-31", drift: 0.0026, vol: 0.038 },
+  { startDate: "2025-04-01", endDate: "2025-12-31", drift: 0.003, vol: 0.046 },
+  { startDate: "2026-01-01", endDate: "2026-09-19", drift: 0.0008, vol: 0.026 },
+];
+
+export const ETH_OHLCV: OHLCVBar[] = anchorLastBar(
+  generateOHLCV(0x38ef12a0, "2024-01-01", "2026-09-19", 2280, ETH_REGIMES, 18_000_000),
+  3845.5,
+);
+
+import { ONE_INCH_OHLCV } from "./one-inch-ohlcv";
+
 export const ALL_OHLCV: Record<string, OHLCVBar[]> = {
   BTC: BTC_OHLCV,
   SOL: SOL_OHLCV,
   GOLD: GOLD_OHLCV,
   NVDA: NVDA_OHLCV,
+  "1INCH": ONE_INCH_OHLCV,
+  "1inch": ONE_INCH_OHLCV,
+  ETH: ETH_OHLCV,
 };
 
 export function barsByTimeframe(bars: OHLCVBar[], tf: string): OHLCVBar[] {

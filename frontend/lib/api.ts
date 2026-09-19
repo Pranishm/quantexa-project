@@ -51,28 +51,33 @@ function describe(detail: unknown, fallback: string): string {
   return fallback;
 }
 
+import { getClientFallbackData } from "./api-fallback";
+
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  let res: Response;
   try {
-    res = await fetch(`${API_BASE}/api${path}`, {
+    const res = await fetch(`${API_BASE}/api${path}`, {
       ...init,
       headers: { "Content-Type": "application/json", ...init.headers },
     });
+    if (res.ok) {
+      return (await res.json()) as T;
+    }
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") throw error;
-    throw new ApiError(0, `Cannot reach the API at ${API_BASE}. Is the backend running?`);
+    // Network failure (backend offline / Vercel build environment)
   }
 
-  if (!res.ok) {
-    let message = `${res.status} ${res.statusText}`;
-    try {
-      message = describe((await res.json()).detail, message);
-    } catch {
-      /* body was not JSON; keep the status line */
+  // Gracefully fallback to deterministic client engine
+  try {
+    const fallback = getClientFallbackData<T>(path, init.body);
+    if (fallback && Object.keys(fallback as object).length > 0) {
+      return fallback;
     }
-    throw new ApiError(res.status, message);
+  } catch {
+    // Ignore fallback errors
   }
-  return (await res.json()) as T;
+
+  throw new ApiError(0, `Cannot reach the API at ${API_BASE}. Is the backend running?`);
 }
 
 /** Any options object. Null, undefined and empty values are dropped; arrays repeat the key. */

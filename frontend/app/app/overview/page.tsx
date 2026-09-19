@@ -49,18 +49,10 @@ export default function OverviewPage() {
   const selected = marketSim.assets[activeAsset] || DEMO_ASSETS["BTC"];
 
   // Role & Mode tailored workstation rendering
-  if (mode === "TRADING") {
+  if (mode === "TRADING" || role === "trader") {
     return (
       <div className="p-6 max-w-7xl mx-auto space-y-6 font-sans">
         <TradingWorkspace />
-      </div>
-    );
-  }
-
-  if (mode === "LEARNING" || role === "student") {
-    return (
-      <div className="p-6 max-w-7xl mx-auto space-y-6 font-sans">
-        <LearningWorkspace />
       </div>
     );
   }
@@ -372,7 +364,13 @@ export default function OverviewPage() {
                 <Clock className="w-3.5 h-3.5 text-[var(--accent)]" />
                 RESEARCH ACTIVITY
               </span>
-              <span className="text-[10px] text-[var(--positive)] font-mono font-bold">STREAM LIVE</span>
+              <div className="flex items-center gap-2 font-mono text-[10px]">
+                <span className="text-[var(--positive)] font-bold">STREAM LIVE</span>
+                <span className="text-[var(--text-muted)]">•</span>
+                <Link href="/app/account/activity" className="text-[var(--accent)] hover:underline font-semibold">
+                  Full Audit Log (125) →
+                </Link>
+              </div>
             </div>
 
             <div className="space-y-2.5 text-xs">

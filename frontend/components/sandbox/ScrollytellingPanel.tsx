@@ -47,7 +47,7 @@ function AnimatedCard({ card, index }: { card: NarrativeCard; index: number }) {
         delay: index * 0.06,
         ease: [0.25, 0.46, 0.45, 0.94],
       }}
-      className="p-4 rounded-xl bg-[rgba(15,23,42,0.4)] border border-[var(--neo-border)] hover:border-[rgba(148,163,184,0.2)] transition-all group"
+      className="p-4 rounded-2xl clay-recessed bg-[var(--bg-recessed)] border border-[var(--border)] hover:border-[var(--accent)]/40 transition-all group shadow-sm"
       style={{ borderLeft: `3px solid ${card.accentBorder}` }}
     >
       <div className="flex items-start gap-3">
@@ -245,19 +245,27 @@ export function ScrollytellingPanel({
   const narratives = generateNarratives(backtestData ?? {});
 
   return (
-    <div className={`glass-panel flex flex-col overflow-hidden ${className}`}>
+    <div className={`clay-card rounded-3xl border border-[var(--border)] bg-[var(--bg-surface)] flex flex-col overflow-hidden shadow-sm ${className}`}>
       {/* Header */}
-      <div className="px-5 py-3 border-b border-[var(--neo-border)]">
-        <h3 className="text-sm font-bold text-[var(--text-primary)] tracking-wide">
-          STRATEGY NARRATIVE
-        </h3>
-        <p className="text-[10px] text-[var(--text-muted)] mt-0.5">
-          Scroll for insights · {narratives.length} analysis cards
-        </p>
+      <div className="px-5 py-3.5 border-b border-[var(--border)] flex items-center justify-between">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
+            <h3 className="text-xs font-bold text-[var(--text-primary)] tracking-wider uppercase font-mono">
+              STRATEGY NARRATIVE
+            </h3>
+          </div>
+          <p className="text-[10px] text-[var(--text-muted)] mt-0.5 font-sans">
+            Deterministic AI factor synthesis · {narratives.length} insights
+          </p>
+        </div>
+        <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-[var(--accent-muted)] text-[var(--accent)] font-semibold border border-[var(--accent-border)]">
+          FEATHERLESS
+        </span>
       </div>
 
       {/* Scrollable narrative cards */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 custom-scrollbar">
         {narratives.map((card, i) => (
           <AnimatedCard key={card.id} card={card} index={i} />
         ))}

@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Activity, Sliders, ArrowUpRight, BarChart2, TrendingUp,
-  Layers, Share2, Compass, CheckCircle2, RefreshCw, Eye
+  Layers, Share2, Compass, CheckCircle2, RefreshCw, Eye, Zap, Radio
 } from "lucide-react";
 import Link from "next/link";
 import { marketHub, type AssetKey } from "@/lib/market-data-hub";
+import { useMarketSimulation } from "@/lib/market-simulation";
 import {
   calculateCorrelationMatrix,
   calculateRollingCorrelation,
@@ -18,6 +19,17 @@ type ViewMode = "matrix" | "rolling" | "relative" | "scatter" | "topology";
 type CorrMethod = "pearson" | "spearman" | "rolling";
 
 export default function MarketXRayPage() {
+  const marketSim = useMarketSimulation();
+  const [liveTickCounter, setLiveTickCounter] = useState(0);
+
+  // Subscribe to live tick engine
+  useEffect(() => {
+    const unsub = marketHub.subscribe(() => {
+      setLiveTickCounter((prev) => prev + 1);
+    });
+    return unsub;
+  }, []);
+
   const [timeframe, setTimeframe] = useState<"1M" | "3M" | "6M" | "1Y" | "MAX">("1Y");
   const [viewMode, setViewMode] = useState<ViewMode>("matrix");
   const [method, setMethod] = useState<CorrMethod>("pearson");
@@ -30,19 +42,19 @@ export default function MarketXRayPage() {
   // 1. Dynamic Correlation Matrix calculated from real data
   const matrixResult = useMemo(() => {
     return calculateCorrelationMatrix(symbols, timeframe);
-  }, [timeframe]);
+  }, [timeframe, liveTickCounter]);
 
   const matrixData = matrixResult.matrix;
 
   // 2. Dynamic Rolling Correlation calculated for selected pair and window
   const rollingSeries = useMemo(() => {
     return calculateRollingCorrelation(selectedPair[0], selectedPair[1], rollingWindowDays, timeframe);
-  }, [selectedPair, rollingWindowDays, timeframe]);
+  }, [selectedPair, rollingWindowDays, timeframe, liveTickCounter]);
 
   // 3. Dynamic Normalized Performance (Base 100) from market data hub
   const normalizedComparison = useMemo(() => {
     return marketHub.getMultiAssetComparison(symbols, timeframe);
-  }, [timeframe]);
+  }, [timeframe, liveTickCounter]);
 
   // Merge timestamps for multi-line SVG chart
   const normalizedDates = useMemo(() => {
@@ -54,7 +66,7 @@ export default function MarketXRayPage() {
   // 4. Dynamic Risk / Return metrics
   const riskReturnStats = useMemo(() => {
     return calculateRiskReturnComparison(symbols, timeframe);
-  }, [timeframe]);
+  }, [timeframe, liveTickCounter]);
 
   const scatterPoints = useMemo(() => {
     const colors: Record<AssetKey, string> = {
@@ -62,6 +74,8 @@ export default function MarketXRayPage() {
       SOL: "#10B981",
       GOLD: "#F59E0B",
       NVDA: "#3B82F6",
+      "1INCH": "#2B82F6",
+      ETH: "#627EEA",
     };
     return riskReturnStats.map((s) => ({
       symbol: s.asset,
@@ -87,7 +101,10 @@ export default function MarketXRayPage() {
             <span className="text-[11px] font-mono tracking-wider text-[var(--accent)] font-semibold uppercase px-2.5 py-0.5 rounded-full clay-recessed border border-[var(--accent)]/20">
               QUANTITATIVE RESEARCH
             </span>
-            <span className="text-xs text-[var(--text-muted)] font-mono">DETERMINISTIC ENGINE</span>
+            <span className="text-xs text-[var(--text-muted)] font-mono flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-[#00E599] animate-ping" />
+              LIVE TICK ENGINE · {marketSim.latencyMs}ms REFRESH
+            </span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
             MARKET X-RAY &amp; CROSS-ASSET CORRELATION
@@ -132,6 +149,49 @@ export default function MarketXRayPage() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* ── LIVE MULTI-ASSET STREAM BAR ──────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {symbols.map((sym) => {
+          const assetData = marketSim.assets[sym] || {
+            price: sym === "BTC" ? 104846.2 : sym === "SOL" ? 184.5 : sym === "GOLD" ? 2740.1 : 128.4,
+            changePercent: 1.85,
+            high: 105000,
+            low: 102000,
+            volume: 24500000,
+          };
+          const isPos = assetData.changePercent >= 0;
+          return (
+            <div
+              key={sym}
+              className="clay-card p-4 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] flex items-center justify-between shadow-sm hover:scale-[1.01] transition-all"
+            >
+              <div>
+                <div className="flex items-center gap-1.5 font-mono text-[10px] text-[var(--text-muted)] uppercase">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#00E599] animate-pulse" />
+                  <span className="font-bold text-[var(--text-primary)]">{sym}</span>
+                  <span>/ USD</span>
+                </div>
+                <div className="text-base font-extrabold text-[var(--text-primary)] font-mono mt-0.5">
+                  ${assetData.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+              </div>
+              <div className="text-right">
+                <span
+                  className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md ${
+                    isPos ? "bg-emerald-500/15 text-[#00E599]" : "bg-rose-500/15 text-[#FF3B69]"
+                  }`}
+                >
+                  {isPos ? `+${assetData.changePercent}%` : `${assetData.changePercent}%`}
+                </span>
+                <div className="text-[9px] font-mono text-[var(--text-muted)] mt-1">
+                  Vol: {assetData.volume}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Analytical View Switcher Tabs */}
@@ -453,7 +513,7 @@ export default function MarketXRayPage() {
               {symbols.map((sym) => {
                 const pts = normalizedComparison[sym] || [];
                 const lastVal = pts[pts.length - 1]?.normalized ?? 100;
-                const colors: Record<AssetKey, string> = { BTC: "#6757E8", SOL: "#10B981", GOLD: "#F59E0B", NVDA: "#3B82F6" };
+                const colors: Record<AssetKey, string> = { BTC: "#6757E8", SOL: "#10B981", GOLD: "#F59E0B", NVDA: "#3B82F6", "1INCH": "#2B82F6", ETH: "#627EEA" };
                 return (
                   <span key={sym} className="flex items-center gap-1.5 text-[var(--text-primary)]">
                     <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: colors[sym] }} />
@@ -470,7 +530,7 @@ export default function MarketXRayPage() {
               <text x="8" y="175" fill="currentColor" fillOpacity="0.5" fontSize="10" fontFamily="monospace">Base: 100</text>
 
               {symbols.map((sym) => {
-                const colors: Record<AssetKey, string> = { BTC: "#6757E8", SOL: "#10B981", GOLD: "#F59E0B", NVDA: "#3B82F6" };
+                const colors: Record<AssetKey, string> = { BTC: "#6757E8", SOL: "#10B981", GOLD: "#F59E0B", NVDA: "#3B82F6", "1INCH": "#2B82F6", ETH: "#627EEA" };
                 const pts = normalizedComparison[sym] || [];
                 if (pts.length < 2) return null;
 
@@ -503,74 +563,312 @@ export default function MarketXRayPage() {
         </div>
       )}
 
-      {/* VIEW 4: RISK / RETURN SCATTER */}
+      {/* VIEW 4: RISK / RETURN SCATTER (MARKOWITZ FRONTIER) */}
       {viewMode === "scatter" && (
-        <div className="clay-card p-6 rounded-3xl border border-[var(--border)] bg-[var(--bg-surface)] space-y-4">
-          <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+        <div className="clay-card p-6 rounded-3xl border border-[var(--border)] bg-[var(--bg-surface)] space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[var(--border)] pb-3.5 gap-3">
             <div>
-              <h3 className="font-bold text-sm text-[var(--text-primary)] flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <BarChart2 className="w-4 h-4 text-[var(--accent)]" />
-                Cross-Asset Risk vs Return Spectrum
-              </h3>
-              <p className="text-xs text-[var(--text-muted)]">
-                X-Axis: Realized Annualized Volatility · Y-Axis: Annualized Cumulative Return
+                <h3 className="font-bold text-sm text-[var(--text-primary)] tracking-wide font-mono">
+                  CROSS-ASSET RISK VS RETURN EFFICIENT FRONTIER
+                </h3>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--accent-muted)] text-[var(--accent)] font-semibold border border-[var(--accent-border)]">
+                  MARKOWITZ SPACE
+                </span>
+              </div>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                X-Axis: Realized Annualized Volatility (Risk) · Y-Axis: Compound Annual Growth Rate (CAGR Return) · {timeframe} Window
               </p>
+            </div>
+
+            {/* Sharpe benchmarks legend */}
+            <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono">
+              <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">Sharpe Rating:</span>
+              <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 text-[#00E599] font-bold text-[10px] border border-emerald-500/20">
+                &gt; 1.0 (Strong)
+              </span>
+              <span className="px-2 py-0.5 rounded-md bg-blue-500/15 text-[#3B82F6] font-bold text-[10px] border border-blue-500/20">
+                0.5 – 1.0 (Moderate)
+              </span>
+              <span className="px-2 py-0.5 rounded-md bg-amber-500/15 text-[#F59E0B] font-bold text-[10px] border border-amber-500/20">
+                &lt; 0.5 (High Drag)
+              </span>
             </div>
           </div>
 
-          <div className="w-full bg-[var(--bg-recessed)]/50 rounded-2xl p-6 border border-[var(--border)] relative">
-            <svg viewBox="0 0 800 260" className="w-full h-64">
-              <line x1="60" y1="20" x2="60" y2="220" stroke="currentColor" strokeOpacity="0.2" />
-              <line x1="60" y1="220" x2="760" y2="220" stroke="currentColor" strokeOpacity="0.2" />
+          {/* SVG Canvas with Full Axes, Quadrants & Sharpe Rays */}
+          <div className="w-full bg-[var(--bg-recessed)]/70 rounded-2xl p-4 sm:p-6 border border-[var(--border)] relative overflow-hidden">
+            <svg viewBox="0 0 880 340" className="w-full h-80 font-mono select-none">
+              <defs>
+                <linearGradient id="optGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#00E599" stopOpacity="0.08" />
+                  <stop offset="100%" stopColor="#00E599" stopOpacity="0.01" />
+                </linearGradient>
+                <linearGradient id="subGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#FF3B69" stopOpacity="0.01" />
+                  <stop offset="100%" stopColor="#FF3B69" stopOpacity="0.06" />
+                </linearGradient>
+              </defs>
 
-              <text x="760" y="240" fill="currentColor" fillOpacity="0.5" fontSize="10" fontFamily="monospace" textAnchor="end">
-                Volatility (Risk) →
+              {/* Quadrant Background Shading */}
+              <rect x="75" y="30" width="370" height="190" fill="url(#optGrad)" rx="8" />
+              <rect x="445" y="220" width="380" height="70" fill="url(#subGrad)" rx="8" />
+
+              {/* Quadrant Labels */}
+              <text x="85" y="48" fill="#00E599" fillOpacity="0.6" fontSize="9" fontWeight="bold" letterSpacing="1">
+                ▲ OPTIMAL QUADRANT (HIGH RETURN / LOW RISK)
               </text>
-              <text x="20" y="30" fill="currentColor" fillOpacity="0.5" fontSize="10" fontFamily="monospace" transform="rotate(-90 20,30)">
-                Return →
+              <text x="460" y="48" fill="currentColor" fillOpacity="0.3" fontSize="9" fontWeight="bold" letterSpacing="1">
+                ▲ AGGRESSIVE ALPHA (HIGH RETURN / HIGH VOL)
+              </text>
+              <text x="85" y="280" fill="currentColor" fillOpacity="0.35" fontSize="9" fontWeight="bold" letterSpacing="1">
+                ▼ DEFENSIVE PRESERVATION (LOW RETURN / LOW VOL)
+              </text>
+              <text x="460" y="280" fill="#FF3B69" fillOpacity="0.5" fontSize="9" fontWeight="bold" letterSpacing="1">
+                ▼ SUB-OPTIMAL DRAG (LOW RETURN / HIGH VOL)
               </text>
 
-              {scatterPoints.map((p) => {
-                const cx = 60 + Math.min(680, Math.max(20, (p.vol / 80) * 680));
-                const cy = 220 - Math.min(190, Math.max(10, ((p.ret + 20) / 100) * 190));
+              {/* Sharpe Reference Rays from origin (75, 220) */}
+              <line x1="75" y1="220" x2="745" y2="30" stroke="currentColor" strokeOpacity="0.15" strokeDasharray="5 5" />
+              <text x="750" y="34" fill="currentColor" fillOpacity="0.4" fontSize="9">Sharpe = 1.0 (Capital Allocation Line)</text>
+
+              {/* Horizontal Gridlines & Y-Axis Scale */}
+              {[
+                { label: "+100%", y: 40 },
+                { label: "+75%",  y: 85 },
+                { label: "+50%",  y: 130 },
+                { label: "+25%",  y: 175 },
+                { label: "0% Return", y: 220, bold: true },
+                { label: "-25%", y: 265 },
+              ].map((g, i) => (
+                <g key={i}>
+                  <line
+                    x1="75"
+                    y1={g.y}
+                    x2="830"
+                    y2={g.y}
+                    stroke="currentColor"
+                    strokeOpacity={g.bold ? 0.4 : 0.12}
+                    strokeDasharray={g.bold ? undefined : "3 3"}
+                  />
+                  <text
+                    x="65"
+                    y={g.y + 3.5}
+                    fill="currentColor"
+                    fillOpacity={g.bold ? 0.9 : 0.45}
+                    fontSize="9.5"
+                    fontWeight={g.bold ? "bold" : "normal"}
+                    textAnchor="end"
+                  >
+                    {g.label}
+                  </text>
+                </g>
+              ))}
+
+              {/* Vertical Gridlines & X-Axis Scale */}
+              {[
+                { label: "0%",  x: 75 },
+                { label: "20%", x: 226 },
+                { label: "40%", x: 377 },
+                { label: "60%", x: 528 },
+                { label: "80%", x: 679 },
+                { label: "100% Vol", x: 830, bold: true },
+              ].map((g, i) => (
+                <g key={i}>
+                  <line
+                    x1={g.x}
+                    y1="30"
+                    x2={g.x}
+                    y2="290"
+                    stroke="currentColor"
+                    strokeOpacity={g.bold ? 0.35 : 0.1}
+                    strokeDasharray="3 3"
+                  />
+                  <text
+                    x={g.x}
+                    y="306"
+                    fill="currentColor"
+                    fillOpacity={g.bold ? 0.85 : 0.5}
+                    fontSize="9.5"
+                    fontWeight={g.bold ? "bold" : "normal"}
+                    textAnchor="middle"
+                  >
+                    {g.label}
+                  </text>
+                </g>
+              ))}
+
+              {/* X & Y Main Axis Labels */}
+              <text x="450" y="325" fill="currentColor" fillOpacity="0.75" fontSize="10" fontWeight="bold" textAnchor="middle">
+                ANNUALIZED REALIZED VOLATILITY (RISK) →
+              </text>
+              <text x="18" y="145" fill="currentColor" fillOpacity="0.75" fontSize="10" fontWeight="bold" transform="rotate(-90 18,145)" textAnchor="middle">
+                CAGR RETURN (ANNUALIZED) →
+              </text>
+
+              {/* Scatter Asset Nodes with Distinct Non-Overlapping Coordinates & Permanent Pills */}
+              {scatterPoints.map((p, idx) => {
+                // X mapping: 0% at 75, 100% at 830 -> span = 755
+                const cx = 75 + Math.min(755, Math.max(15, (p.vol / 100) * 755));
+                // Y mapping: 0% at 220, 100% at 40 -> span = 180
+                const cy = 220 - ((p.ret) / 100) * 180;
+
+                // Dedicated badge offset so tags never overlap
+                const pillOffsets: Record<string, { dx: number; dy: number }> = {
+                  GOLD: { dx: 18, dy: -28 },
+                  BTC:  { dx: 18, dy: -26 },
+                  SOL:  { dx: -180, dy: -26 },
+                  NVDA: { dx: 18, dy: -26 },
+                };
+                const offset = pillOffsets[p.symbol] || { dx: 18, dy: -26 };
 
                 return (
                   <g key={p.symbol} className="cursor-pointer group">
+                    {/* Pulsing Aura */}
+                    <circle cx={cx} cy={cy} r="22" fill={p.color} fillOpacity="0.15" />
+                    
+                    {/* Outer Border */}
                     <circle
                       cx={cx}
                       cy={cy}
-                      r="16"
+                      r="15"
                       fill={p.color}
-                      fillOpacity="0.85"
-                      className="transition-transform group-hover:scale-125"
+                      stroke="#FFFFFF"
+                      strokeWidth="2"
+                      className="transition-transform group-hover:scale-115"
                     />
+
+                    {/* Symbol Text inside circle */}
                     <text
                       x={cx}
-                      y={cy + 4}
+                      y={cy + 3.5}
                       fill="#FFFFFF"
                       fontSize="9"
                       fontWeight="bold"
-                      fontFamily="monospace"
                       textAnchor="middle"
                     >
-                      {p.symbol}
+                      {p.symbol.slice(0, 3)}
                     </text>
+
+                    {/* Connector stem */}
+                    <line
+                      x1={cx}
+                      y1={cy}
+                      x2={cx + offset.dx + (offset.dx < 0 ? 150 : 0)}
+                      y2={cy + offset.dy + 10}
+                      stroke={p.color}
+                      strokeWidth="1.5"
+                      strokeOpacity="0.7"
+                    />
+
+                    {/* Permanent Callout Pill */}
+                    <rect
+                      x={cx + offset.dx}
+                      y={cy + offset.dy}
+                      width="168"
+                      height="24"
+                      rx="6"
+                      fill="var(--bg-surface)"
+                      stroke={p.color}
+                      strokeWidth="1.5"
+                      className="shadow-md"
+                    />
+
                     <text
-                      x={cx}
-                      y={cy - 20}
-                      fill="currentColor"
-                      fontSize="10"
-                      fontWeight="600"
-                      fontFamily="monospace"
-                      textAnchor="middle"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      x={cx + offset.dx + 8}
+                      y={cy + offset.dy + 15}
+                      fill="var(--text-primary)"
+                      fontSize="9.5"
+                      fontWeight="bold"
                     >
-                      {p.symbol}: +{p.ret}% | Vol: {p.vol}% | Sharpe: {p.sharpe}
+                      <tspan fill={p.color} fontWeight="900">{p.symbol}</tspan>
+                      <tspan fill="currentColor" fillOpacity="0.8"> · CAGR: </tspan>
+                      <tspan fill={p.ret >= 0 ? "#00E599" : "#FF3B69"}>
+                        {p.ret >= 0 ? `+${p.ret}%` : `${p.ret}%`}
+                      </tspan>
+                      <tspan fill="currentColor" fillOpacity="0.5"> | </tspan>
+                      <tspan fill="currentColor" fillOpacity="0.8">S: {p.sharpe}</tspan>
                     </text>
                   </g>
                 );
               })}
             </svg>
+          </div>
+
+          {/* 4-Asset Comparative Institutional Risk & Return Breakdown */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+            {scatterPoints.map((p) => {
+              const sharpeRating =
+                p.sharpe >= 1.0
+                  ? { label: "Strong Alpha", color: "text-[#00E599] bg-emerald-500/10 border-emerald-500/20" }
+                  : p.sharpe >= 0.5
+                  ? { label: "Moderate", color: "text-[#3B82F6] bg-blue-500/10 border-blue-500/20" }
+                  : { label: "High Risk Drag", color: "text-[#F59E0B] bg-amber-500/10 border-amber-500/20" };
+
+              const profiles: Record<string, { role: string; desc: string }> = {
+                BTC: { role: "Liquid Macro Asset", desc: "Digital store of value with convex upside and intermediate drawdowns." },
+                SOL: { role: "High-Beta Layer 1", desc: "Extreme momentum and volatility; requires systematic trend-filtering." },
+                GOLD: { role: "Defensive Reserve", desc: "Low correlation to equities; optimal portfolio ballast during shocks." },
+                NVDA: { role: "AI Mega-Cap Tech", desc: "Dominant earnings momentum with concentrated semiconductor cyclicality." },
+              };
+              const prof = profiles[p.symbol] || { role: "Cross-Asset", desc: "Quantitative asset stream." };
+
+              return (
+                <div
+                  key={p.symbol}
+                  className="clay-recessed p-4 rounded-2xl border border-[var(--border)] bg-[var(--bg-recessed)]/60 space-y-3 hover:border-[var(--accent)]/30 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 font-mono">
+                      <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: p.color }} />
+                      <span className="font-bold text-sm text-[var(--text-primary)]">{p.symbol}</span>
+                      <span className="text-[10px] text-[var(--text-muted)]">/ USD</span>
+                    </div>
+                    <span className={`text-[9px] font-mono font-semibold px-2 py-0.5 rounded-md border ${sharpeRating.color}`}>
+                      {sharpeRating.label}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs font-mono pt-1">
+                    <div className="p-2 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)]">
+                      <span className="text-[9px] text-[var(--text-muted)] uppercase block">CAGR Return</span>
+                      <span className={`text-sm font-extrabold ${p.ret >= 0 ? "text-[#00E599]" : "text-[#FF3B69]"}`}>
+                        {p.ret >= 0 ? `+${p.ret}%` : `${p.ret}%`}
+                      </span>
+                    </div>
+
+                    <div className="p-2 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)]">
+                      <span className="text-[9px] text-[var(--text-muted)] uppercase block">Annualized Vol</span>
+                      <span className="text-sm font-extrabold text-[var(--text-primary)]">
+                        {p.vol}%
+                      </span>
+                    </div>
+
+                    <div className="p-2 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)]">
+                      <span className="text-[9px] text-[var(--text-muted)] uppercase block">Sharpe Ratio</span>
+                      <span className="text-sm font-extrabold text-[var(--accent)]">
+                        {p.sharpe}
+                      </span>
+                    </div>
+
+                    <div className="p-2 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)]">
+                      <span className="text-[9px] text-[var(--text-muted)] uppercase block">Max Drawdown</span>
+                      <span className="text-sm font-extrabold text-[#FF3B69]">
+                        {p.maxDd}%
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="pt-1 border-t border-[var(--border)]/60 text-[10px] text-[var(--text-secondary)] font-sans leading-relaxed">
+                    <strong className="text-[var(--text-primary)] block font-mono text-[9px] uppercase tracking-wider mb-0.5">
+                      {prof.role}
+                    </strong>
+                    {prof.desc}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -598,6 +896,8 @@ export default function MarketXRayPage() {
                   SOL: [420, 80],
                   NVDA: [180, 240],
                   GOLD: [420, 240],
+                  "1INCH": [80, 160],
+                  ETH: [520, 160],
                 };
                 const [x1, y1] = positions[link.source];
                 const [x2, y2] = positions[link.target];
