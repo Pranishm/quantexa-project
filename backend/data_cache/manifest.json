@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-09-19T08:45:49+00:00",
+  "assets": {
+    "GC=F": {
+      "rows": 2192,
+      "start": "2018-01-02",
+      "end": "2026-09-18",
+      "source": "live",
+      "gaps": 0
+    },
+    "BTC-USD": {
+      "rows": 3184,
+      "start": "2018-01-01",
+      "end": "2026-09-19",
+      "source": "live",
+      "gaps": 0
+    },
+    "NVDA": {
+      "rows": 2190,
+      "start": "2018-01-02",
+      "end": "2026-09-18",
+      "source": "live",
+      "gaps": 0
+    }
+  }
+}

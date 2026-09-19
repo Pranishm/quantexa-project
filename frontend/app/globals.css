@@ -1,0 +1,504 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  --font-heading: var(--font-sans);
+
+  --color-background: var(--bg-root);
+  --color-foreground: var(--text-primary);
+  --color-card: var(--bg-elevated);
+  --color-card-foreground: var(--text-primary);
+  --color-popover: var(--bg-elevated);
+  --color-popover-foreground: var(--text-primary);
+  --color-primary: var(--accent);
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary: var(--bg-hover);
+  --color-secondary-foreground: var(--text-secondary);
+  --color-muted: var(--bg-surface);
+  --color-muted-foreground: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-foreground: #FFFFFF;
+  --color-destructive: var(--negative);
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--accent);
+
+  /* Quantitative Institutional Palette */
+  --color-root: var(--bg-root);
+  --color-sidebar: var(--bg-sidebar);
+  --color-surface: var(--bg-surface);
+  --color-elevated: var(--bg-elevated);
+  --color-hover: var(--bg-hover);
+
+  --color-border-subtle: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-subtle: var(--text-subtle);
+
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-warning: var(--warning);
+  --color-neutral: var(--neutral);
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+}
+
+:root {
+  color-scheme: dark;
+
+  /* QUANTORA Dark Graphite Clay System */
+  --bg-root: #080A0D;
+  --bg-sidebar: #080A0D;
+  --bg-surface: #111417;
+  --bg-elevated: #171A1E;
+  --bg-recessed: #0D1013;
+  --bg-hover: #1E2328;
+
+  --border: rgba(255, 255, 255, 0.04);
+  --border-strong: rgba(255, 255, 255, 0.08);
+
+  --text-primary: #F2F4F3;
+  --text-secondary: #969E9B;
+  --text-muted: #858D8A;
+  --text-subtle: #414847;
+
+  /* Brand Accent: Violet */
+  --accent: #8776FF;
+  --accent-muted: rgba(135, 118, 255, 0.12);
+  --accent-border: rgba(135, 118, 255, 0.35);
+
+  /* Semantic Quantitative Colors */
+  --positive: #35D39A;
+  --positive-bg: rgba(53, 211, 154, 0.1);
+  --positive-border: rgba(53, 211, 154, 0.3);
+
+  --negative: #FF6572;
+  --negative-bg: rgba(255, 101, 114, 0.1);
+  --negative-border: rgba(255, 101, 114, 0.3);
+
+  --warning: #E4B64D;
+  --warning-bg: rgba(228, 182, 77, 0.1);
+
+  --neutral: #969E9B;
+
+  /* Clay Shadows (Dark Elevated & Recessed Clay) */
+  --clay-shadow: -5px -5px 12px rgba(255, 255, 255, 0.025), 8px 8px 18px rgba(0, 0, 0, 0.55);
+  --clay-shadow-sm: -3px -3px 8px rgba(255, 255, 255, 0.02), 5px 5px 12px rgba(0, 0, 0, 0.45);
+  --clay-shadow-elevated: -7px -7px 16px rgba(255, 255, 255, 0.03), 11px 11px 24px rgba(0, 0, 0, 0.62);
+  --clay-recessed: inset 4px 4px 9px rgba(0, 0, 0, 0.55), inset -3px -3px 7px rgba(255, 255, 255, 0.03);
+  --clay-recessed-sm: inset 2px 2px 6px rgba(0, 0, 0, 0.5), inset -2px -2px 5px rgba(255, 255, 255, 0.025);
+
+  --radius: 12px;
+}
+
+/* Light Mode — Warm Ivory & Graphite Financial Paper Palette */
+:root.light, .light {
+  color-scheme: light;
+
+  --bg-root: #E2E5E1;
+  --bg-sidebar: #E2E5E1;
+  --bg-surface: #E9EBE7;
+  --bg-elevated: #EFF1ED;
+  --bg-recessed: #D9DDD8;
+  --bg-hover: #DFE2DE;
+
+  --border: rgba(100, 110, 103, 0.14);
+  --border-strong: rgba(100, 110, 103, 0.26);
+
+  --text-primary: #151817;
+  --text-secondary: #626A66;
+  --text-muted: #66706B;
+  --text-subtle: #89918D;
+
+  /* Brand Accent: QUANTORA Violet */
+  --accent: #6757E8;
+  --accent-muted: rgba(103, 87, 232, 0.12);
+  --accent-border: rgba(103, 87, 232, 0.35);
+
+  /* Semantic Trading Market Colors: Traditional Green / Red */
+  --positive: #12966D;
+  --positive-bg: rgba(18, 150, 109, 0.1);
+  --positive-border: rgba(18, 150, 109, 0.3);
+
+  --negative: #D94E5C;
+  --negative-bg: rgba(217, 78, 92, 0.1);
+  --negative-border: rgba(217, 78, 92, 0.3);
+
+  --warning: #B68124;
+  --warning-bg: rgba(182, 129, 36, 0.1);
+
+  --neutral: #626A66;
+
+  /* Light Elevated & Recessed Clay Shadows */
+  --clay-shadow: -7px -7px 14px rgba(255, 255, 255, 0.82), 8px 8px 18px rgba(112, 120, 113, 0.22);
+  --clay-shadow-sm: -4px -4px 10px rgba(255, 255, 255, 0.8), 5px 5px 12px rgba(112, 120, 113, 0.18);
+  --clay-shadow-elevated: -10px -10px 20px rgba(255, 255, 255, 0.9), 11px 11px 24px rgba(112, 120, 113, 0.25);
+  --clay-recessed: inset 4px 4px 9px rgba(115, 123, 116, 0.18), inset -4px -4px 9px rgba(255, 255, 255, 0.78);
+  --clay-recessed-sm: inset 2px 2px 6px rgba(115, 123, 116, 0.15), inset -2px -2px 6px rgba(255, 255, 255, 0.72);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    background-color: var(--bg-root);
+    color: var(--text-primary);
+  }
+
+  body {
+    background-color: var(--bg-root);
+    color: var(--text-primary);
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Monospace only for numbers, tables, timestamps, logs */
+  .tnum {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  /* Institutional Quiet Scrollbars */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #20252C;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #303640;
+  }
+}
+
+/* Institutional Clean Table Styling */
+.research-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.research-table th {
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.research-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(32, 37, 44, 0.6);
+  color: var(--text-secondary);
+}
+
+.research-table tr:hover td {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* Subtle Institutional Panels */
+.institutional-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.institutional-elevated {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+/* Subtle Marquee Slide */
+@keyframes ticker-slide {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-ticker {
+  display: flex;
+  width: max-content;
+  animation: ticker-slide 45s linear infinite;
+}
+
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+
+/* ==========================================================
+   QUANTORA PREMIUM CLAYMORPHISM / SOFT CLAY UI UTILITIES
+   ========================================================== */
+
+.clay-card {
+  background-color: var(--bg-surface);
+  box-shadow: var(--clay-shadow);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.clay-card-elevated {
+  background-color: var(--bg-elevated);
+  box-shadow: var(--clay-shadow-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+}
+
+.clay-surface {
+  background-color: var(--bg-surface);
+  box-shadow: var(--clay-shadow);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+}
+
+.clay-surface-recessed {
+  background-color: var(--bg-surface);
+  box-shadow: var(--clay-recessed);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+
+.clay-interactive {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.clay-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--clay-shadow-elevated);
+}
+
+.clay-interactive:active {
+  transform: translateY(1px) scale(0.985);
+  box-shadow: var(--clay-recessed-sm);
+}
+
+.clay-recessed {
+  background-color: var(--bg-surface);
+  box-shadow: var(--clay-recessed);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.clay-recessed-sm {
+  background-color: var(--bg-surface);
+  box-shadow: var(--clay-recessed-sm);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.clay-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-weight: 500;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--clay-shadow-sm);
+}
+
+.clay-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--clay-shadow);
+}
+
+.clay-button:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: var(--clay-recessed-sm);
+}
+
+.clay-button-primary {
+  background: var(--accent);
+  color: #FFFFFF;
+  box-shadow: 0 4px 16px rgba(136, 120, 255, 0.35);
+}
+
+.clay-button-primary:hover {
+  box-shadow: 0 6px 20px rgba(136, 120, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.clay-button-primary:active {
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+  transform: translateY(1px) scale(0.98);
+}
+
+.clay-pill {
+  border-radius: 9999px;
+  box-shadow: var(--clay-shadow-sm);
+  transition: all 0.18s ease;
+}
+
+.clay-pill-active {
+  box-shadow: var(--clay-recessed);
+  background-color: var(--bg-hover);
+}
+
+/* Molded Clay Node for Strategy Lab */
+.clay-node {
+  background-color: var(--bg-surface);
+  box-shadow: var(--clay-shadow-sm);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.clay-node:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--clay-shadow);
+}
+
+.clay-node-selected {
+  box-shadow: var(--clay-recessed);
+  border-color: var(--accent);
+  transform: translateY(1px);
+}
+
+/* Subtle physical breathing for 3D parameter surface & networks */
+@keyframes clay-breathe {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.006);
+  }
+}
+
+.animate-clay-breathe {
+  animation: clay-breathe 8s ease-in-out infinite;
+}
+
+/* Tactile Range Slider molded into clay groove */
+input[type=range].clay-slider {
+  -webkit-appearance: none;
+  background: var(--bg-surface);
+  box-shadow: var(--clay-recessed-sm);
+  height: 8px;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  outline: none;
+}
+
+input[type=range].clay-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: var(--clay-shadow-sm);
+  cursor: pointer;
+  border: 2px solid var(--bg-surface);
+  transition: transform 0.15s ease;
+}
+
+input[type=range].clay-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* ==========================================================
+   NEO-FINANCIAL SANDBOX — GLASSMORPHISM & BENTO SYSTEM
+   ========================================================== */
+
+:root {
+  --neo-bg: #0B1120;
+  --neo-gold: #FFD700;
+  --neo-mint: #34D399;
+  --neo-coral: #F87171;
+  --neo-blue: #60A5FA;
+  --neo-surface: rgba(15, 23, 42, 0.50);
+  --neo-border: rgba(148, 163, 184, 0.12);
+  --neo-glow: 0 0 40px rgba(96, 165, 250, 0.06);
+}
+
+/* Glassmorphism Panel */
+.glass-panel {
+  background: var(--neo-surface);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid var(--neo-border);
+  border-radius: 16px;
+  box-shadow: var(--neo-glow);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.glass-panel-hover:hover {
+  border-color: rgba(148, 163, 184, 0.22);
+  box-shadow: 0 0 50px rgba(96, 165, 250, 0.10), 0 8px 32px rgba(0, 0, 0, 0.30);
+}
+
+/* Bento Grid */
+.bento-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .bento-grid {
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto 1fr auto;
+  }
+}
+
+/* Neo-Financial sparkline animations */
+@keyframes neo-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.neo-pulse {
+  animation: neo-pulse 2s ease-in-out infinite;
+}
+
+@keyframes neo-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.neo-slide-in {
+  animation: neo-slide-in 0.5s ease-out forwards;
+}

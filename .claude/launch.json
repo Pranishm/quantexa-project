@@ -1,0 +1,57 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "quantexa-api",
+      "runtimeExecutable": "/Applications/XAMPP/xamppfiles/htdocs/quantexa-project/backend/.venv/bin/uvicorn",
+      "runtimeArgs": [
+        "app.main:app",
+        "--port",
+        "8000",
+        "--app-dir",
+        "/Applications/XAMPP/xamppfiles/htdocs/quantexa-project/backend"
+      ],
+      "port": 8000
+    },
+    {
+      "name": "quantexa-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Applications/XAMPP/xamppfiles/htdocs/quantexa-project/frontend",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "3001"
+      ],
+      "port": 3001
+    },
+    {
+      "name": "quantexa-web-prod",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Applications/XAMPP/xamppfiles/htdocs/quantexa-project/frontend",
+        "run",
+        "start",
+        "--",
+        "--port",
+        "3002"
+      ],
+      "port": 3002
+    },
+    {
+      "name": "heroes",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4173",
+        "--directory",
+        "/Applications/XAMPP/xamppfiles/htdocs/quantexa-project/heroes"
+      ],
+      "port": 4173
+    }
+  ]
+}

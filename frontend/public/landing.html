@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>QUANTORA — Quantitative Research Station</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=block"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --u: min(calc(100vw / 1280), calc(100dvh / 760));
+        --ink: #f4f5f7;
+        --ink-muted: #a8afb8;
+        --ink-faint: #68717c;
+        --panel: rgba(8, 10, 13, 0.75);
+        --white-btn: #f4f5f7;
+        --btn-ink: #050608;
+        --brand-accent: #7868ff;
+        --glass-line: rgba(255, 255, 255, 0.08);
+        --dx: 8.5;
+        --dy: 13.1;
+        --e-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+        --e-soft: cubic-bezier(0.25, 0.8, 0.3, 1);
+      }
+      @supports not (height: 100dvh) {
+        :root {
+          --u: min(calc(100vw / 1280), calc(100vh / 760));
+        }
+      }
+
+      * { box-sizing: border-box; }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #050608;
+      }
+      body {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: geometricPrecision;
+        color: #f4f5f7;
+      }
+
+      .hero {
+        position: relative;
+        width: 100vw;
+        height: 100dvh;
+        overflow: hidden;
+        background: #050608;
+      }
+      @supports not (height: 100dvh) {
+        .hero { height: 100vh; }
+      }
+
+      .bg {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: max(100vw, calc(100dvh * 1.6));
+        height: max(62.5vw, 100dvh);
+        background-color: #050608;
+      }
+      @supports not (height: 100dvh) {
+        .bg { width: max(100vw, calc(100vh * 1.6)); height: max(62.5vw, 100vh); }
+      }
+      .bg-video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 51% 8%;
+        display: block;
+        background-color: #050608;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.9s linear;
+      }
+      .bg-video.is-active { opacity: 1; }
+
+      .atmospheric-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(
+          circle at 50% 32%,
+          rgba(120, 104, 255, 0.08) 0%,
+          rgba(8, 10, 13, 0.4) 50%,
+          rgba(5, 6, 8, 0.92) 100%
+        );
+        z-index: 1;
+      }
+
+      .nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: calc(67 * var(--u));
+        display: flex;
+        align-items: center;
+        padding-left: calc(32 * var(--u));
+        padding-right: calc(32 * var(--u));
+        z-index: 3;
+      }
+      .logo {
+        font-weight: 700;
+        font-size: calc(18 * var(--u));
+        letter-spacing: calc(0.2 * var(--u));
+        color: #f4f5f7;
+        text-decoration: none;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: calc(10 * var(--u));
+      }
+      .logo-glyph {
+        width: calc(14 * var(--u));
+        height: calc(14 * var(--u));
+        border-radius: 3px;
+        background: #7868ff;
+      }
+
+      .nav-links {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        gap: calc(24 * var(--u));
+        white-space: nowrap;
+        background: rgba(8, 10, 13, 0.65);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        padding: calc(6 * var(--u)) calc(20 * var(--u));
+        border-radius: calc(20 * var(--u));
+      }
+      .nav-links a {
+        color: var(--ink-muted);
+        text-decoration: none;
+        font-size: calc(12 * var(--u));
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        transition: color 0.18s ease;
+      }
+      .nav-links a:hover {
+        color: #ffffff;
+      }
+
+      .nav-actions {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: calc(12 * var(--u));
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-family: inherit;
+        text-decoration: none;
+        white-space: nowrap;
+        border: 0;
+        cursor: pointer;
+        border-radius: 6px;
+      }
+      .btn-login {
+        height: calc(30 * var(--u));
+        padding: 0 calc(14 * var(--u));
+        background: transparent;
+        color: var(--ink-muted);
+        font-size: calc(12 * var(--u));
+        font-weight: 500;
+        transition: color 0.18s ease;
+      }
+      .btn-login:hover {
+        color: #ffffff;
+      }
+
+      .btn-nav-start {
+        height: calc(30 * var(--u));
+        padding: 0 calc(14 * var(--u));
+        background: #f4f5f7;
+        color: #050608;
+        font-size: calc(12 * var(--u));
+        font-weight: 600;
+        gap: calc(6 * var(--u));
+        transition: background 0.18s ease, transform 0.18s ease;
+      }
+      .btn-nav-start:hover {
+        background: #ffffff;
+        transform: translateY(-1px);
+      }
+
+      .burger {
+        display: none;
+        margin-left: auto;
+        width: 36px;
+        height: 30px;
+        align-items: center;
+        justify-content: center;
+        background: #101318;
+        border-radius: 6px;
+        border: 1px solid #20252c;
+        cursor: pointer;
+        padding: 0;
+      }
+      .burger span {
+        display: block;
+        width: 16px;
+        height: 1.5px;
+        background: #f4f5f7;
+        border-radius: 1px;
+        position: relative;
+      }
+      .burger span::before, .burger span::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        width: 16px;
+        height: 1.5px;
+        background: #f4f5f7;
+        border-radius: 1px;
+      }
+      .burger span::before { top: -5px; }
+      .burger span::after { top: 5px; }
+
+      .hero-inner {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) translate(calc(var(--dx) * var(--u)), calc(var(--dy) * var(--u)));
+        width: max-content;
+        text-align: center;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: calc(8 * var(--u));
+        padding: calc(4 * var(--u)) calc(12 * var(--u));
+        border-radius: 20px;
+        background: rgba(120, 104, 255, 0.08);
+        border: 1px solid rgba(120, 104, 255, 0.25);
+        color: #a8afb8;
+        font-size: calc(11 * var(--u));
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-bottom: calc(20 * var(--u));
+      }
+      .tag-dot {
+        width: calc(6 * var(--u));
+        height: calc(6 * var(--u));
+        border-radius: 50%;
+        background: #36c98f;
+      }
+
+      h1 {
+        margin: 0;
+        font-weight: 500;
+        font-size: calc(84 * var(--u));
+        line-height: calc(88 * var(--u));
+        letter-spacing: calc(-1.2 * var(--u));
+        color: #ffffff;
+      }
+      .ln { display: block; }
+      .ln-i { display: block; }
+
+      .sub {
+        margin: calc(20 * var(--u)) 0 0;
+        font-weight: 300;
+        font-size: calc(17 * var(--u));
+        line-height: calc(26 * var(--u));
+        letter-spacing: -0.01em;
+        color: #a8afb8;
+        max-width: 50ch;
+      }
+
+      .ctas {
+        margin-top: calc(28 * var(--u));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: calc(12 * var(--u));
+      }
+
+      .btn-lg {
+        height: calc(40 * var(--u));
+        border-radius: 6px;
+        font-size: calc(13 * var(--u));
+        font-weight: 600;
+        padding: 0 calc(20 * var(--u));
+      }
+      .btn-primary {
+        background: #f4f5f7;
+        color: #050608;
+        transition: background 0.18s ease, transform 0.18s ease;
+      }
+      .btn-primary:hover {
+        background: #ffffff;
+        transform: translateY(-1px);
+      }
+
+      .btn-ghost {
+        background: rgba(16, 19, 24, 0.7);
+        color: #f4f5f7;
+        border: 1px solid #20252c;
+        backdrop-filter: blur(8px);
+        transition: background 0.18s ease, border-color 0.18s ease;
+      }
+      .btn-ghost:hover {
+        background: #151920;
+        border-color: #303640;
+      }
+
+      /* Clean Institutional Research Telemetry Panel */
+      .research-preview {
+        margin-top: calc(32 * var(--u));
+        width: min(calc(100vw - 48px), calc(680 * var(--u)));
+        background: rgba(11, 13, 16, 0.75);
+        border: 1px solid #20252c;
+        border-radius: 8px;
+        padding: calc(14 * var(--u)) calc(20 * var(--u));
+        backdrop-filter: blur(20px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+        display: flex;
+        flex-direction: column;
+        gap: calc(12 * var(--u));
+        text-align: left;
+        cursor: pointer;
+        transition: border-color 0.2s ease, transform 0.2s ease;
+      }
+      .research-preview:hover {
+        border-color: #303640;
+        transform: translateY(-2px);
+      }
+      .preview-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: calc(10 * var(--u));
+        border-bottom: 1px solid #20252c;
+      }
+      .preview-title {
+        font-size: calc(11 * var(--u));
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #a8afb8;
+      }
+      .preview-meta {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: calc(11 * var(--u));
+        color: #68717c;
+      }
+      .preview-meta .val { color: #f4f5f7; }
+      .preview-meta .pos { color: #36c98f; }
+
+      .preview-body {
+        display: grid;
+        grid-template-columns: calc(180 * var(--u)) 1fr;
+        gap: calc(20 * var(--u));
+        align-items: center;
+      }
+      .preview-metrics {
+        display: flex;
+        flex-direction: column;
+        gap: calc(8 * var(--u));
+      }
+      .metric-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: calc(6 * var(--u)) calc(10 * var(--u));
+        background: #101318;
+        border: 1px solid #20252c;
+        border-radius: 4px;
+      }
+      .metric-box .label {
+        font-size: calc(11 * var(--u));
+        color: #68717c;
+      }
+      .metric-box .val {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: calc(13 * var(--u));
+        font-weight: 600;
+        color: #f4f5f7;
+      }
+      .metric-box .val.pos { color: #36c98f; }
+
+      .preview-chart {
+        height: calc(80 * var(--u));
+        position: relative;
+      }
+      .preview-svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* MOBILE MENU */
+      .menu { display: none; }
+      .menu.open { display: flex; animation: menuIn 0.18s ease both; }
+      @keyframes menuIn {
+        from { opacity: 0; transform: translateY(-6px); }
+        to { opacity: 1; transform: none; }
+      }
+
+      /* ENTRANCE ANIMATION */
+      html.anim .ln { overflow: hidden; padding-top: 0.26em; margin-top: -0.26em; }
+      html.anim .ln-i { transform: translateY(100%); }
+      html.anim .logo, html.anim .hero-tag, html.anim .nav-links a,
+      html.anim .nav-actions a, html.anim .burger, html.anim .sub,
+      html.anim .ctas a, html.anim .research-preview { opacity: 0; }
+
+      @keyframes lineRise { from { transform: translateY(100%); } to { transform: translateY(0); } }
+      @keyframes subIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+      @keyframes liftIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+      html.anim.go .ln-i { animation: lineRise 1s var(--e-reveal) both; }
+      html.anim.go .ln:nth-child(1) .ln-i { animation-delay: 0.1s; }
+      html.anim.go .ln:nth-child(2) .ln-i { animation-delay: 0.2s; }
+      html.anim.go .hero-tag { animation: liftIn 0.6s var(--e-soft) 0.3s both; }
+      html.anim.go .logo { animation: liftIn 0.6s var(--e-soft) 0.4s both; }
+      html.anim.go .nav-links a { animation: liftIn 0.5s var(--e-soft) both; }
+      html.anim.go .nav-links a:nth-child(1) { animation-delay: 0.45s; }
+      html.anim.go .nav-links a:nth-child(2) { animation-delay: 0.50s; }
+      html.anim.go .nav-links a:nth-child(3) { animation-delay: 0.55s; }
+      html.anim.go .nav-links a:nth-child(4) { animation-delay: 0.60s; }
+      html.anim.go .sub { animation: subIn 0.8s var(--e-reveal) 0.5s both; }
+      html.anim.go .btn-login { animation: liftIn 0.5s var(--e-soft) 0.6s both; }
+      html.anim.go .btn-nav-start { animation: liftIn 0.5s var(--e-soft) 0.65s both; }
+      html.anim.go .ctas .btn-primary { animation: liftIn 0.6s var(--e-reveal) 0.8s both; }
+      html.anim.go .ctas .btn-ghost { animation: liftIn 0.6s var(--e-reveal) 0.85s both; }
+      html.anim.go .research-preview { animation: liftIn 0.8s var(--e-reveal) 0.95s both; }
+
+      @media (max-width: 1080px) {
+        .nav-links, .nav-actions { display: none; }
+        .burger { display: flex; }
+        .menu {
+          position: absolute; top: 60px; right: 24px;
+          width: 240px; background: #0b0d10; border: 1px solid #20252c;
+          border-radius: 8px; padding: 12px; flex-direction: column; gap: 8px; z-index: 10;
+        }
+        .menu a { color: #a8afb8; text-decoration: none; padding: 8px 12px; border-radius: 4px; font-size: 14px; }
+        .menu a:hover { color: #ffffff; background: #151920; }
+        .research-preview { width: calc(100vw - 48px); }
+      }
+    </style>
+
+    <script>
+      (function () {
+        try {
+          if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        } catch (e) {}
+        var root = document.documentElement;
+        root.classList.add('anim');
+
+        var started = false, cleaned = false, bootTimer = null, safety = null;
+
+        function clean() {
+          if (cleaned) return;
+          cleaned = true;
+          clearTimeout(safety);
+          root.removeEventListener('animationend', onEnd, true);
+          root.classList.remove('anim');
+          root.classList.remove('go');
+        }
+
+        function onEnd(e) {
+          if (e.animationName === 'liftIn' && e.target.classList && e.target.classList.contains('research-preview')) {
+            clean();
+          }
+        }
+
+        function start() {
+          if (started) return;
+          started = true;
+          clearTimeout(bootTimer);
+          root.addEventListener('animationend', onEnd, true);
+          safety = setTimeout(clean, 3000);
+          root.classList.add('go');
+        }
+
+        function boot() {
+          bootTimer = setTimeout(start, 900);
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(start, start);
+          } else {
+            start();
+          }
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', boot);
+        } else {
+          boot();
+        }
+      })();
+    </script>
+  </head>
+
+  <body>
+    <main class="hero">
+      <div class="bg" role="img" aria-label="Stylised globe of Earth rendered as a violet dot matrix against a starfield, slowly rotating">
+        <video
+          class="bg-video is-active"
+          id="bgVideoA"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          disablepictureinpicture
+          aria-hidden="true"
+          poster="https://d2ol7oe51mr4n.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/82e7eb75-c65f-490a-99b5-f3d1cad54200.webp"
+        >
+          <source
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260912_104036_bd6924f6-3c8e-417e-8465-6d03c8c2e9e6.mp4"
+            type="video/mp4"
+          />
+        </video>
+        <video
+          class="bg-video"
+          id="bgVideoB"
+          muted
+          loop
+          playsinline
+          preload="auto"
+          disablepictureinpicture
+          aria-hidden="true"
+          poster="https://d2ol7oe51mr4n.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/82e7eb75-c65f-490a-99b5-f3d1cad54200.webp"
+        >
+          <source
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260912_104036_bd6924f6-3c8e-417e-8465-6d03c8c2e9e6.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+
+      <div class="atmospheric-overlay" aria-hidden="true"></div>
+
+      <header class="nav">
+        <a class="logo" href="/app/overview" aria-label="QUANTORA Home">
+          <span class="logo-glyph" aria-hidden="true"></span>
+          QUANTORA
+        </a>
+
+        <nav class="nav-links" aria-label="Primary">
+          <a href="/app/markets">Markets</a>
+          <a href="/app/research/strategy-lab">Strategy Lab</a>
+          <a href="/app/research/backtest">Backtest</a>
+          <a href="/app/trade/paper">Simulation</a>
+          <a href="/app/learn">Academy</a>
+        </nav>
+
+        <div class="nav-actions">
+          <a class="btn btn-login" href="/login">Sign In</a>
+          <a class="btn btn-nav-start" href="/app/overview">
+            Open Station →
+          </a>
+        </div>
+
+        <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu">
+          <span></span>
+        </button>
+      </header>
+
+      <nav class="menu" id="menu" aria-label="Mobile">
+        <a href="/app/markets">Markets</a>
+        <a href="/app/research/strategy-lab">Strategy Lab</a>
+        <a href="/app/research/backtest">Backtest</a>
+        <a href="/app/trade/paper">Simulation</a>
+        <a href="/app/learn">Academy</a>
+        <a href="/login">Sign In</a>
+        <a href="/app/overview" style="color: #ffffff; font-weight: 600;">Open Station →</a>
+      </nav>
+
+      <div class="hero-inner">
+        <div class="hero-tag">
+          <span class="tag-dot"></span>
+          <span>Quantitative Research Station</span>
+        </div>
+
+        <h1>
+          <span class="ln"><span class="ln-i">Research markets.</span></span>
+          <span class="ln"><span class="ln-i">Stress strategies. Understand risk.</span></span>
+        </h1>
+
+        <p class="sub">
+          A private quantitative intelligence terminal for backtesting, regime-conditioned risk analysis, and systematic portfolio simulation.
+        </p>
+
+        <div class="ctas">
+          <a class="btn btn-lg btn-primary" href="/app/overview">
+            Start Researching
+          </a>
+          <a class="btn btn-lg btn-ghost" href="/app/markets/cross-asset">
+            Explore the Platform
+          </a>
+        </div>
+
+        <div class="research-preview" onclick="window.location.href='/app/overview'" title="Launch Quantitative Terminal">
+          <div class="preview-header">
+            <span class="preview-title">Market Telemetry Snapshot</span>
+            <div class="preview-meta">
+              <span>LATENCY: <span class="val">14ms</span></span>
+              <span style="margin-left: 12px;">STATUS: <span class="pos">LIVE FEED</span></span>
+            </div>
+          </div>
+
+          <div class="preview-body">
+            <div class="preview-metrics">
+              <div class="metric-box">
+                <span class="label">Sharpe Ratio</span>
+                <span class="val pos">2.94</span>
+              </div>
+              <div class="metric-box">
+                <span class="label">Max Drawdown</span>
+                <span class="val">-3.6%</span>
+              </div>
+              <div class="metric-box">
+                <span class="label">Annual Alpha</span>
+                <span class="val pos">+34.8%</span>
+              </div>
+            </div>
+
+            <div class="preview-chart">
+              <svg class="preview-svg" viewBox="0 0 340 80" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="curveGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#7868ff" stop-opacity="0.25" />
+                    <stop offset="100%" stop-color="#7868ff" stop-opacity="0.0" />
+                  </linearGradient>
+                </defs>
+                <line x1="0" y1="20" x2="340" y2="20" stroke="#20252c" stroke-width="1" stroke-dasharray="2 4" />
+                <line x1="0" y1="50" x2="340" y2="50" stroke="#20252c" stroke-width="1" stroke-dasharray="2 4" />
+                <path d="M0,65 Q45,55 90,40 T180,24 T260,32 T340,10 L340,80 L0,80 Z" fill="url(#curveGrad)" />
+                <path d="M0,65 Q45,55 90,40 T180,24 T260,32 T340,10" fill="none" stroke="#f4f5f7" stroke-width="2" />
+                <circle cx="340" cy="10" r="3" fill="#ffffff" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      (function () {
+        var burger = document.getElementById('burger');
+        var menu = document.getElementById('menu');
+        if (!burger || !menu) return;
+
+        function set(open) {
+          menu.classList.toggle('open', open);
+          burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+
+        burger.addEventListener('click', function (e) {
+          e.stopPropagation();
+          set(!menu.classList.contains('open'));
+        });
+
+        document.addEventListener('click', function (e) {
+          if (!menu.classList.contains('open')) return;
+          if (!menu.contains(e.target) && !burger.contains(e.target)) set(false);
+        });
+      })();
+    </script>
+
+    <script>
+      (function () {
+        var A = document.getElementById('bgVideoA');
+        var B = document.getElementById('bgVideoB');
+        if (!A || !B) return;
+
+        var reduce = false;
+        try {
+          reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        } catch (e) {}
+
+        if (reduce) {
+          A.removeAttribute('autoplay');
+          try {
+            A.pause();
+            B.pause();
+            A.currentTime = 0;
+          } catch (e) {}
+          return;
+        }
+
+        var FADE = 0.9;
+        var cur = A, nxt = B, swapping = false;
+
+        function play(v) {
+          var p = v.play();
+          if (p && p.catch) p.catch(function () {});
+        }
+        play(A);
+
+        function tick() {
+          if (swapping || !cur.duration) return;
+          if (cur.duration - cur.currentTime > FADE) return;
+
+          swapping = true;
+          var out = cur;
+          nxt.currentTime = 0;
+          play(nxt);
+          nxt.classList.add('is-active');
+          out.classList.remove('is-active');
+
+          var t = cur; cur = nxt; nxt = t;
+
+          setTimeout(function () {
+            out.pause();
+            out.currentTime = 0;
+            swapping = false;
+          }, FADE * 1000 + 100);
+        }
+
+        A.addEventListener('timeupdate', tick);
+        B.addEventListener('timeupdate', tick);
+      })();
+    </script>
+  </body>
+</html>

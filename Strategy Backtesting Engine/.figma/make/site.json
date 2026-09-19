@@ -1,0 +1,10 @@
+{
+  "description": "This platform enables traders to backtest and optimize rule-based strategies using historical data, ensuring realistic simulations and robust performance analysis.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
