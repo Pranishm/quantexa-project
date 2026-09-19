@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/backend/(.*)",
+      "destination": "https://quantorax-api.onrender.com/api/$1"
+    }
+  ]
+}
