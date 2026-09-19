@@ -136,24 +136,21 @@ export function LandingHero() {
 
       {/* Institutional Top Navigation */}
       <header className="hero-nav">
-        <Link className="hero-logo" href="/app/overview" aria-label="QUANTORA Home">
+        <Link className="hero-logo" href="/" aria-label="QUANTORAX Home">
           <span className="hero-logo-glyph" aria-hidden="true" />
-          QUANTORA
+          QUANTORAX
         </Link>
 
         <nav className="hero-nav-links" aria-label="Primary">
-          <Link href="/app/markets">Markets</Link>
-          <Link href="/app/research/strategy-lab">Strategy Lab</Link>
-          <Link href="/app/research/backtest">Backtest</Link>
-          <Link href="/app/trade/paper">Simulation</Link>
-          <Link href="/app/learn">Academy</Link>
+          <Link href="/dashboard">Overview</Link>
+          <Link href="/lab">Strategy Lab</Link>
+          <Link href="/backtest">Backtest</Link>
+          <Link href="/correlations">Correlations</Link>
+          <Link href="/portfolio">Portfolio</Link>
         </nav>
 
         <div className="hero-nav-actions">
-          <Link className="hero-btn hero-btn-login" href="/login">
-            Sign In
-          </Link>
-          <Link className="hero-btn hero-btn-start" href="/app/overview">
+          <Link className="hero-btn hero-btn-start" href="/dashboard">
             Open Station →
           </Link>
         </div>
@@ -171,13 +168,12 @@ export function LandingHero() {
       {/* Mobile Drawer */}
       {menuOpen && (
         <nav className="hero-menu open" aria-label="Mobile">
-          <Link href="/app/markets" onClick={() => setMenuOpen(false)}>Markets</Link>
-          <Link href="/app/research/strategy-lab" onClick={() => setMenuOpen(false)}>Strategy Lab</Link>
-          <Link href="/app/research/backtest" onClick={() => setMenuOpen(false)}>Backtest</Link>
-          <Link href="/app/trade/paper" onClick={() => setMenuOpen(false)}>Simulation</Link>
-          <Link href="/app/learn" onClick={() => setMenuOpen(false)}>Academy</Link>
-          <Link href="/login" onClick={() => setMenuOpen(false)}>Sign In</Link>
-          <Link href="/app/overview" style={{ color: "#ffffff", fontWeight: 600 }}>Open Station →</Link>
+          <Link href="/dashboard" onClick={() => setMenuOpen(false)}>Overview</Link>
+          <Link href="/lab" onClick={() => setMenuOpen(false)}>Strategy Lab</Link>
+          <Link href="/backtest" onClick={() => setMenuOpen(false)}>Backtest</Link>
+          <Link href="/correlations" onClick={() => setMenuOpen(false)}>Correlations</Link>
+          <Link href="/portfolio" onClick={() => setMenuOpen(false)}>Portfolio</Link>
+          <Link href="/dashboard" style={{ color: "#ffffff", fontWeight: 600 }}>Open Station →</Link>
         </nav>
       )}
 
@@ -198,16 +194,16 @@ export function LandingHero() {
         </p>
 
         <div className="hero-ctas">
-          <Link className="hero-btn hero-btn-lg hero-btn-primary" href="/app/overview">
+          <Link className="hero-btn hero-btn-lg hero-btn-primary" href="/dashboard">
             Start Researching
           </Link>
-          <Link className="hero-btn hero-btn-lg hero-btn-ghost" href="/app/markets/cross-asset">
+          <Link className="hero-btn hero-btn-lg hero-btn-ghost" href="/correlations">
             Explore the Platform
           </Link>
         </div>
 
         {/* Clean Institutional Research Telemetry Panel */}
-        <Link href="/app/overview" className="hero-research-preview" title="Launch Quantitative Terminal">
+        <Link href="/dashboard" className="hero-research-preview" title="Launch Quantitative Terminal">
           <div className="hero-preview-header">
             <span className="hero-preview-title">Market Telemetry Snapshot</span>
             <div className="hero-preview-meta">

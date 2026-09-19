@@ -1,113 +1,59 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-export type UserRole = "guest" | "trader" | "researcher" | "pro" | "admin";
-export type WorkspaceMode = "RESEARCH" | "TRADING" | "LEARNING";
-
-interface WorkspaceContextType {
-  role: UserRole;
-  setRole: (role: UserRole) => void;
-  mode: WorkspaceMode;
-  setMode: (mode: WorkspaceMode) => void;
-  realBalance: number; // In INR (₹)
-  virtualBalance: number; // In USD ($)
-  addRealFunds: (amount: number) => void;
-  executeVirtualTrade: (amount: number) => void;
-  resetVirtualBalance: () => void;
-  isAddMoneyOpen: boolean;
-  setIsAddMoneyOpen: (open: boolean) => void;
-  isVoiceActive: boolean;
-  setIsVoiceActive: (active: boolean) => void;
+interface ThemeContextType {
+  isDark: boolean;
+  toggleTheme: () => void;
 }
 
-const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
-  const [role, setRoleState] = useState<UserRole>("pro");
-  const [mode, setModeState] = useState<WorkspaceMode>("RESEARCH");
-  const [realBalance, setRealBalance] = useState<number>(2500);
-  const [virtualBalance, setVirtualBalance] = useState<number>(100000);
-  const [isAddMoneyOpen, setIsAddMoneyOpen] = useState(false);
-  const [isVoiceActive, setIsVoiceActive] = useState(false);
+  const [isDark, setIsDark] = useState(true);
 
-  // Load persisted role/mode from localStorage if available
+  // Load persisted theme on mount
   useEffect(() => {
     try {
-      const savedRole = localStorage.getItem("quantora_role") as UserRole | null;
-      if (savedRole && ["guest", "trader", "researcher", "pro", "admin"].includes(savedRole)) {
-        setRoleState(savedRole);
-      }
-      const savedMode = localStorage.getItem("quantora_mode") as WorkspaceMode | null;
-      if (savedMode && ["RESEARCH", "TRADING", "LEARNING"].includes(savedMode)) {
-        setModeState(savedMode);
+      const saved = localStorage.getItem("quantora_theme");
+      if (saved === "light") {
+        document.documentElement.classList.add("light");
+        setIsDark(false);
+      } else if (saved === "dark") {
+        document.documentElement.classList.remove("light");
+        setIsDark(true);
       }
     } catch {
       // Ignore
     }
   }, []);
 
-  const setRole = (newRole: UserRole) => {
-    setRoleState(newRole);
-    try {
-      localStorage.setItem("quantora_role", newRole);
-    } catch {
-      // Ignore
-    }
-    // Set natural default mode according to role
-    if (newRole === "trader") {
-      setModeState("TRADING");
-    } else if (newRole === "researcher" || newRole === "pro" || newRole === "guest") {
-      setModeState("RESEARCH");
-    }
-  };
-
-  const setMode = (newMode: WorkspaceMode) => {
-    setModeState(newMode);
-    try {
-      localStorage.setItem("quantora_mode", newMode);
-    } catch {
-      // Ignore
-    }
-  };
-
-  const addRealFunds = (amount: number) => {
-    setRealBalance((prev) => prev + amount);
-  };
-
-  const executeVirtualTrade = (cost: number) => {
-    setVirtualBalance((prev) => prev - cost);
-  };
-
-  const resetVirtualBalance = () => {
-    setVirtualBalance(100000);
+  const toggleTheme = () => {
+    setIsDark((prev) => {
+      const next = !prev;
+      if (next) {
+        document.documentElement.classList.remove("light");
+      } else {
+        document.documentElement.classList.add("light");
+      }
+      try {
+        localStorage.setItem("quantora_theme", next ? "dark" : "light");
+      } catch {
+        // Ignore
+      }
+      return next;
+    });
   };
 
   return (
-    <WorkspaceContext.Provider
-      value={{
-        role,
-        setRole,
-        mode,
-        setMode,
-        realBalance,
-        virtualBalance,
-        addRealFunds,
-        executeVirtualTrade,
-        resetVirtualBalance,
-        isAddMoneyOpen,
-        setIsAddMoneyOpen,
-        isVoiceActive,
-        setIsVoiceActive,
-      }}
-    >
+    <ThemeContext.Provider value={{ isDark, toggleTheme }}>
       {children}
-    </WorkspaceContext.Provider>
+    </ThemeContext.Provider>
   );
 }
 
 export function useWorkspace() {
-  const context = useContext(WorkspaceContext);
+  const context = useContext(ThemeContext);
   if (!context) {
     throw new Error("useWorkspace must be used within a WorkspaceProvider");
   }

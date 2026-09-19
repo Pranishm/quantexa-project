@@ -1,0 +1,13 @@
+frontend/node_modules
+frontend/.next
+backend/.venv
+backend/__pycache__
+.git
+.claude
+.kilo
+scratch
+*.pyc
+node_modules
+.next
+.venv
+__pycache__

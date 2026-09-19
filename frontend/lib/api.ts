@@ -51,8 +51,6 @@ function describe(detail: unknown, fallback: string): string {
   return fallback;
 }
 
-import { getClientFallbackData } from "./api-fallback";
-
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   try {
     const res = await fetch(`${API_BASE}/api${path}`, {
@@ -65,16 +63,6 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") throw error;
     // Network failure (backend offline / Vercel build environment)
-  }
-
-  // Gracefully fallback to deterministic client engine
-  try {
-    const fallback = getClientFallbackData<T>(path, init.body);
-    if (fallback && Object.keys(fallback as object).length > 0) {
-      return fallback;
-    }
-  } catch {
-    // Ignore fallback errors
   }
 
   throw new ApiError(0, `Cannot reach the API at ${API_BASE}. Is the backend running?`);

@@ -231,13 +231,13 @@ export function AssetView({ symbol }: { symbol: AssetSymbol }) {
           return (
             <Link
               key={s}
-              href={`/app/markets/asset/${routeParam}`}
+              href={`/asset/${encodeURIComponent(s)}`}
               aria-current={isSelected ? "page" : undefined}
               className={cn(
                 "inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors",
                 isSelected
-                  ? "border-[#7868FF] bg-[#101318] text-[#F4F5F7]"
-                  : "border-[#20252C] bg-[#080A0D] text-[#A8AFB8] hover:text-[#F4F5F7] hover:bg-[#101318]",
+                  ? "border-[var(--accent)] bg-[var(--bg-elevated)] text-[var(--text-primary)]"
+                  : "border-[var(--border-strong)] bg-[var(--bg-recessed)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]",
               )}
             >
               <span aria-hidden className="size-2 rounded-full" style={{ background: assetColor(s) }} />
