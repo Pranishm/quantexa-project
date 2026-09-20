@@ -136,7 +136,7 @@ export function ApexHeroSection({ onExploreOptions }: { onExploreOptions: () => 
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <motion.div custom={2} initial="hidden" animate="visible" variants={fadeUp}>
               <Link
-                href="/app/overview"
+                href="/dashboard"
                 className="inline-flex items-center justify-between gap-6 px-7 py-3.5 rounded-full bg-[#F7931A] text-white font-semibold text-sm transition-all duration-200 hover:scale-[1.04] hover:brightness-110 active:scale-95 shadow-[0_4px_24px_rgba(247,147,26,0.38)] cursor-pointer"
               >
                 <span>Start Trading</span>

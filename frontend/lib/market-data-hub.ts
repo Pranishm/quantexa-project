@@ -243,8 +243,9 @@ class MarketDataHub {
    * Retrieves historical OHLCV bars for an asset, filtered by timeframe or date range,
    * merged seamlessly with the active live candle.
    */
-  public getBars(asset: AssetKey, timeframe: string = "1Y", startDate?: string, endDate?: string): OHLCVBar[] {
-    const rawBars = ALL_OHLCV[asset] || [];
+  public getBars(asset: AssetKey | string, timeframe: string = "1Y", startDate?: string, endDate?: string): OHLCVBar[] {
+    const normalizedAsset = asset === "BTC-USD" ? "BTC" : asset === "GC=F" ? "GOLD" : asset;
+    const rawBars = ALL_OHLCV[normalizedAsset as string] || [];
     let bars = barsByTimeframe(rawBars, timeframe);
 
     if (startDate) {
@@ -258,7 +259,7 @@ class MarketDataHub {
 
     // Attach active candle as the latest bar
     const lastBar = bars[bars.length - 1];
-    const liveCandle = this.activeCandles[asset];
+    const liveCandle = this.activeCandles[normalizedAsset as AssetKey];
     if (liveCandle && lastBar.time !== liveCandle.time) {
       return [...bars, liveCandle];
     } else if (liveCandle && lastBar.time === liveCandle.time) {
@@ -273,7 +274,7 @@ class MarketDataHub {
   /**
    * Calculate normalized performance (Base 100), returns, and drawdown series.
    */
-  public getNormalizedPerformance(asset: AssetKey, timeframe: string = "1Y"): NormalizedDataPoint[] {
+  public getNormalizedPerformance(asset: AssetKey | string, timeframe: string = "1Y"): NormalizedDataPoint[] {
     const bars = this.getBars(asset, timeframe);
     if (bars.length === 0) return [];
 
@@ -313,8 +314,10 @@ class MarketDataHub {
 export const marketHub = MarketDataHub.getInstance();
 
 // React hook for reactive UI updates
-export function useMarketData(asset?: AssetKey) {
+export function useMarketData(asset?: AssetKey | string) {
   const [_, setTick] = useState(0);
+
+  const normalizedAsset = asset === "BTC-USD" ? "BTC" : asset === "GC=F" ? "GOLD" : (asset as AssetKey | undefined);
 
   useEffect(() => {
     return marketHub.subscribe(() => {
@@ -323,9 +326,9 @@ export function useMarketData(asset?: AssetKey) {
   }, []);
 
   return {
-    metrics: asset ? marketHub.getMetrics(asset) : marketHub.getAllMetrics(),
-    price: asset ? marketHub.getPrice(asset) : undefined,
-    activeCandle: asset ? marketHub.getActiveCandle(asset) : undefined,
+    metrics: normalizedAsset ? marketHub.getMetrics(normalizedAsset) : marketHub.getAllMetrics(),
+    price: normalizedAsset ? marketHub.getPrice(normalizedAsset) : undefined,
+    activeCandle: normalizedAsset ? marketHub.getActiveCandle(normalizedAsset) : undefined,
     connection: marketHub.getConnectionStatus(),
     getBars: (a: AssetKey, tf?: string, start?: string, end?: string) => marketHub.getBars(a, tf, start, end),
     getNormalizedPerformance: (a: AssetKey, tf?: string) => marketHub.getNormalizedPerformance(a, tf),

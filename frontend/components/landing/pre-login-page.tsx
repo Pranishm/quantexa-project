@@ -210,7 +210,7 @@ export function PreLoginPage() {
           </Link>
 
           <Link
-            href="/app/overview"
+            href="/dashboard"
             className="px-4 py-2 rounded-xl bg-[var(--accent)] text-white text-xs font-semibold clay-button flex items-center gap-1.5 hover:opacity-95 transition-opacity shadow-sm"
           >
             <span>Open Research Station</span>
@@ -503,13 +503,20 @@ export function PreLoginPage() {
 
           <div className="h-64 flex items-center justify-center rounded-xl clay-recessed bg-[var(--bg-recessed)] text-xs font-mono text-[var(--text-muted)]">
             <div className="text-center space-y-2">
-              <BarChart3 className="w-8 h-8 mx-auto text-[var(--accent)]" />
+              <div className="flex items-end justify-center gap-1 h-12 mb-3">
+                <div className="w-1.5 bg-[var(--negative)] rounded-t animate-[pulse_1s_ease-in-out_infinite]" style={{ height: '50%' }}></div>
+                <div className="w-1.5 bg-[var(--positive)] rounded-t animate-[pulse_1.2s_ease-in-out_0.2s_infinite]" style={{ height: '80%' }}></div>
+                <div className="w-1.5 bg-[var(--positive)] rounded-t animate-[pulse_1.5s_ease-in-out_0.4s_infinite]" style={{ height: '90%' }}></div>
+                <div className="w-1.5 bg-[var(--negative)] rounded-t animate-[pulse_1.1s_ease-in-out_0.1s_infinite]" style={{ height: '60%' }}></div>
+                <div className="w-1.5 bg-[var(--positive)] rounded-t animate-[pulse_1.3s_ease-in-out_0.5s_infinite]" style={{ height: '100%' }}></div>
+                <div className="w-1.5 bg-[var(--negative)] rounded-t animate-[pulse_1.4s_ease-in-out_0.3s_infinite]" style={{ height: '40%' }}></div>
+              </div>
               <div className="font-bold text-[var(--text-primary)]">Dense OHLCV Candlestick Engine</div>
               <div className="text-[10px] max-w-sm mx-auto">
                 750+ deterministic sessions with synchronized volume pane, SMA 20/50, and buy/sell execution markers.
               </div>
               <Link
-                href="/app/assets/bitcoin"
+                href="/asset/BTC-USD"
                 className="inline-flex items-center gap-1.5 text-xs text-[var(--accent)] hover:underline pt-2 font-semibold"
               >
                 <span>Launch Interactive Chart Workstation</span>
@@ -675,7 +682,7 @@ export function PreLoginPage() {
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
           <Link
-            href="/app/overview"
+            href="/dashboard"
             className="px-6 py-3.5 rounded-2xl bg-[var(--accent)] text-white text-sm font-semibold clay-button flex items-center gap-2 hover:opacity-95 transition-all shadow-md"
           >
             <span>Open Research Station</span>
@@ -700,8 +707,8 @@ export function PreLoginPage() {
           <div className="flex items-center gap-5">
             <Link href="/login" className="hover:text-[var(--text-primary)]">Sign In</Link>
             <Link href="/signup" className="hover:text-[var(--text-primary)]">Create Account</Link>
-            <Link href="/app/overview" className="hover:text-[var(--text-primary)]">Terminal</Link>
-            <Link href="/app/account/security" className="hover:text-[var(--text-primary)]">Security</Link>
+            <Link href="/dashboard" className="hover:text-[var(--text-primary)]">Terminal</Link>
+            <Link href="/dashboard" className="hover:text-[var(--text-primary)]">Security</Link>
           </div>
         </div>
       </footer>
