@@ -248,10 +248,10 @@ class MarketDataHub {
     let bars = barsByTimeframe(rawBars, timeframe);
 
     if (startDate) {
-      bars = bars.filter((b) => b.time >= startDate);
+      bars = bars.filter((b: OHLCVBar) => b.time >= startDate);
     }
     if (endDate) {
-      bars = bars.filter((b) => b.time <= endDate);
+      bars = bars.filter((b: OHLCVBar) => b.time <= endDate);
     }
 
     if (bars.length === 0) return rawBars;
