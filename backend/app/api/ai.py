@@ -14,9 +14,9 @@ from pydantic import BaseModel
 log = logging.getLogger("quantexa.ai")
 router = APIRouter(prefix="/ai", tags=["ai"])
 
-OPENAI_API_KEY = os.getenv(
-    "OPENAI_API_KEY",
-    "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",
+FEATHERLESS_API_KEY = os.getenv(
+    "FEATHERLESS_API_KEY",
+    "rc_dffda727681161f7b90ef5ace182b5698a153de3f0172db01c7cc0a67e2c35fb",
 )
 
 
@@ -127,13 +127,13 @@ def generate_telemetry_fallback(query: str, symbol: str) -> dict[str, Any]:
         }
 
 
-@router.post("/chat", summary="Query Quantora AI Copilot with OpenAI API Key")
+@router.post("/chat", summary="Query Quantora AI Copilot with Featherless API Key")
 def chat_copilot(req: ChatRequest) -> dict[str, Any]:
-    # Attempt live OpenAI Chat Completion
-    if OPENAI_API_KEY and OPENAI_API_KEY.startswith("sk-"):
+    # Attempt live Featherless Chat Completion
+    if FEATHERLESS_API_KEY:
         try:
             payload = {
-                "model": "gpt-4o-mini",
+                "model": "deepseek-ai/DeepSeek-V4.1-Flash",
                 "messages": [
                     {"role": "system", "content": QUANT_SYSTEM_PROMPT},
                     {
@@ -148,11 +148,11 @@ def chat_copilot(req: ChatRequest) -> dict[str, Any]:
 
             req_data = json.dumps(payload).encode("utf-8")
             api_req = urllib.request.Request(
-                "https://api.openai.com/v1/chat/completions",
+                "https://api.featherless.ai/v1/chat/completions",
                 data=req_data,
                 headers={
                     "Content-Type": "application/json",
-                    "Authorization": f"Bearer {OPENAI_API_KEY}",
+                    "Authorization": f"Bearer {FEATHERLESS_API_KEY}",
                     "User-Agent": "Quantora-Terminal/1.0",
                 },
                 method="POST",
@@ -164,14 +164,14 @@ def chat_copilot(req: ChatRequest) -> dict[str, Any]:
                 parsed = json.loads(choice)
                 return {
                     "status": "success",
-                    "provider": "openai:gpt-4o-mini",
+                    "provider": "featherless:deepseek-ai/DeepSeek-V4.1-Flash",
                     "structured": parsed,
                 }
         except urllib.error.HTTPError as e:
             err_body = e.read().decode("utf-8")
-            log.warning("OpenAI API HTTPError %d: %s. Using high-fidelity engine telemetry.", e.code, err_body)
+            log.warning("Featherless API HTTPError %d: %s. Using high-fidelity engine telemetry.", e.code, err_body)
         except Exception as ex:
-            log.warning("OpenAI API call failed (%s). Using high-fidelity engine telemetry.", ex)
+            log.warning("Featherless API call failed (%s). Using high-fidelity engine telemetry.", ex)
 
     # High-Fidelity Quant Telemetry Fallback
     fallback = generate_telemetry_fallback(req.query, req.symbol or "BTC-USD")

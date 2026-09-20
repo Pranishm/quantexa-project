@@ -160,4 +160,8 @@ export const api = {
     },
     signal?: AbortSignal,
   ) => post<PortfolioResponse>("/portfolio", body, signal),
+
+  chat: (body: { query: string; symbol?: string; context?: string }, signal?: AbortSignal) =>
+    post<any>("/ai/chat", body, signal),
 };
+

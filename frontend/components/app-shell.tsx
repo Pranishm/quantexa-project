@@ -22,6 +22,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Home,
+  Sparkles,
 } from "lucide-react";
 
 import { CommandPalette } from "@/components/shell/command-palette";
@@ -51,6 +52,7 @@ const NAV_SECTIONS: NavSection[] = [
   {
     title: "RESEARCH",
     items: [
+      { id: "nav-copilot", label: "Featherless AI", href: "/copilot", icon: Sparkles },
       { id: "nav-backtest", label: "Backtest Studio", href: "/backtest", icon: Cpu },
       { id: "nav-lab", label: "Strategy Lab", href: "/lab", icon: FlaskConical },
       { id: "nav-montecarlo", label: "Monte Carlo", href: "/montecarlo", icon: Layers },

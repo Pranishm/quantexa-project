@@ -9,7 +9,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api import analytics, backtest, insights, market
+from app.api import analytics, backtest, insights, market, ai
 from app.config import ASSETS, DISCLAIMER
 from app.data.cache import read_manifest
 
@@ -56,6 +56,7 @@ app.include_router(market.router, prefix="/api")
 app.include_router(analytics.router, prefix="/api")
 app.include_router(backtest.router, prefix="/api")
 app.include_router(insights.router, prefix="/api")
+app.include_router(ai.router, prefix="/api")
 
 
 @app.get("/api/health", tags=["meta"], summary="Liveness and snapshot status")

@@ -102,51 +102,51 @@
   --radius: 12px;
 }
 
-/* Light Mode — Warm Ivory & Graphite Financial Paper Palette */
+/* Light Mode — Crisp Neo-Financial White Palette */
 :root.light,
 .light {
   color-scheme: light;
 
-  --bg-root: #E2E5E1;
-  --bg-sidebar: #E2E5E1;
-  --bg-surface: #E9EBE7;
-  --bg-elevated: #EFF1ED;
-  --bg-recessed: #D9DDD8;
-  --bg-hover: #DFE2DE;
+  --bg-root: #F8FAFC;
+  --bg-sidebar: #F1F5F9;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #F8FAFC;
+  --bg-recessed: #E2E8F0;
+  --bg-hover: #F1F5F9;
 
-  --border: rgba(100, 110, 103, 0.14);
-  --border-strong: rgba(100, 110, 103, 0.26);
+  --border: rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.16);
 
-  --text-primary: #151817;
-  --text-secondary: #626A66;
-  --text-muted: #66706B;
-  --text-subtle: #89918D;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-subtle: #94A3B8;
 
-  /* Brand Accent: QUANTORA Violet */
-  --accent: #6757E8;
-  --accent-muted: rgba(103, 87, 232, 0.12);
-  --accent-border: rgba(103, 87, 232, 0.35);
+  /* Brand Accent: QUANTORA Violet (Darker for light mode contrast) */
+  --accent: #4F46E5;
+  --accent-muted: rgba(79, 70, 229, 0.12);
+  --accent-border: rgba(79, 70, 229, 0.35);
 
   /* Semantic Trading Market Colors: Traditional Green / Red */
-  --positive: #12966D;
-  --positive-bg: rgba(18, 150, 109, 0.1);
-  --positive-border: rgba(18, 150, 109, 0.3);
+  --positive: #10B981;
+  --positive-bg: rgba(16, 185, 129, 0.1);
+  --positive-border: rgba(16, 185, 129, 0.3);
 
-  --negative: #D94E5C;
-  --negative-bg: rgba(217, 78, 92, 0.1);
-  --negative-border: rgba(217, 78, 92, 0.3);
+  --negative: #EF4444;
+  --negative-bg: rgba(239, 68, 68, 0.1);
+  --negative-border: rgba(239, 68, 68, 0.3);
 
-  --warning: #B68124;
-  --warning-bg: rgba(182, 129, 36, 0.1);
+  --warning: #F59E0B;
+  --warning-bg: rgba(245, 158, 11, 0.1);
 
-  --neutral: #626A66;
+  --neutral: #64748B;
 
-  /* Light Elevated & Recessed Clay Shadows */
-  --clay-shadow: -7px -7px 14px rgba(255, 255, 255, 0.82), 8px 8px 18px rgba(112, 120, 113, 0.22);
-  --clay-shadow-sm: -4px -4px 10px rgba(255, 255, 255, 0.8), 5px 5px 12px rgba(112, 120, 113, 0.18);
-  --clay-shadow-elevated: -10px -10px 20px rgba(255, 255, 255, 0.9), 11px 11px 24px rgba(112, 120, 113, 0.25);
-  --clay-recessed: inset 4px 4px 9px rgba(115, 123, 116, 0.18), inset -4px -4px 9px rgba(255, 255, 255, 0.78);
-  --clay-recessed-sm: inset 2px 2px 6px rgba(115, 123, 116, 0.15), inset -2px -2px 6px rgba(255, 255, 255, 0.72);
+  /* Light Elevated & Recessed Clay Shadows (Crisper) */
+  --clay-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+  --clay-shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.03);
+  --clay-shadow-elevated: 0 10px 24px rgba(15, 23, 42, 0.08), 0 4px 8px rgba(15, 23, 42, 0.04);
+  --clay-recessed: inset 2px 2px 6px rgba(15, 23, 42, 0.04);
+  --clay-recessed-sm: inset 1px 1px 3px rgba(15, 23, 42, 0.03);
 }
 
 @layer base {
