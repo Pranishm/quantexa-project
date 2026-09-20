@@ -22,20 +22,6 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Home,
-  Star,
-  Radar,
-  LayoutGrid,
-  Target,
-  Activity,
-  Columns,
-  Crosshair,
-  FileText,
-  LineChart,
-  PieChart,
-  Bot,
-  Bell,
-  Settings,
-  History,
 } from "lucide-react";
 
 import { CommandPalette } from "@/components/shell/command-palette";
@@ -55,53 +41,26 @@ interface NavSection {
 // One sidebar, one story: mirrors the problem statement top-to-bottom.
 const NAV_SECTIONS: NavSection[] = [
   {
-    title: "OVERVIEW",
+    title: "DASHBOARD",
     items: [
       { id: "nav-overview", label: "Overview", href: "/dashboard", icon: LayoutDashboard },
-      { id: "nav-watchlist", label: "Watchlist", href: "/watchlist", icon: Star },
-      { id: "nav-market-xray", label: "Market X-Ray", href: "/market-xray", icon: Radar },
-    ],
-  },
-  {
-    title: "MARKETS",
-    items: [
-      { id: "nav-markets", label: "Markets", href: "/markets", icon: LayoutGrid },
-      { id: "nav-asset", label: "Asset Explorer", href: "/asset/BTC-USD", icon: Target },
-      { id: "nav-screener", label: "Screener", href: "/screener", icon: Search },
+      { id: "nav-assets", label: "Assets", href: "/asset/BTC-USD", icon: TrendingUp },
+      { id: "nav-correlations", label: "Correlations", href: "/correlations", icon: Network },
     ],
   },
   {
     title: "RESEARCH",
     items: [
+      { id: "nav-backtest", label: "Backtest Studio", href: "/backtest", icon: Cpu },
       { id: "nav-lab", label: "Strategy Lab", href: "/lab", icon: FlaskConical },
-      { id: "nav-backtest", label: "Backtests", href: "/backtest", icon: Cpu },
-      { id: "nav-autopsy", label: "Strategy Autopsy", href: "/autopsy", icon: Activity },
-      { id: "nav-regimes", label: "Regimes", href: "/regimes", icon: Columns },
-      { id: "nav-robustness", label: "Robustness", href: "/robustness", icon: Crosshair },
-      { id: "nav-integrity", label: "Integrity", href: "/integrity", icon: ShieldCheck },
-      { id: "nav-report", label: "Reports", href: "/report", icon: FileText },
+      { id: "nav-montecarlo", label: "Monte Carlo", href: "/montecarlo", icon: Layers },
+      { id: "nav-portfolio", label: "Portfolio Simulator", href: "/portfolio", icon: Sliders },
     ],
   },
   {
-    title: "SIMULATION",
+    title: "REPORTING",
     items: [
-      { id: "nav-paper-trading", label: "Paper Trading", href: "/paper-trading", icon: LineChart },
-      { id: "nav-portfolio", label: "Portfolio", href: "/portfolio", icon: PieChart },
-      { id: "nav-scenarios", label: "Scenarios", href: "/scenarios", icon: TrendingUp },
-    ],
-  },
-  {
-    title: "ASSIST",
-    items: [
-      { id: "nav-copilot", label: "Quant Copilot", href: "/copilot", icon: Bot },
-      { id: "nav-alerts", label: "Alerts", href: "/alerts", icon: Bell },
-    ],
-  },
-  {
-    title: "ACCOUNT",
-    items: [
-      { id: "nav-settings", label: "Settings", href: "/settings", icon: Settings },
-      { id: "nav-activity", label: "Activity", href: "/activity", icon: History },
+      { id: "nav-report", label: "Research Report", href: "/report", icon: ShieldCheck },
     ],
   },
 ];
