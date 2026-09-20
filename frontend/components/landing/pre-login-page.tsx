@@ -689,7 +689,7 @@ export function PreLoginPage() {
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
-            href="/signup"
+            href="/login"
             className="px-6 py-3.5 rounded-2xl clay-button bg-[var(--bg-elevated)] border border-[var(--border)] text-sm font-medium text-[var(--text-primary)] hover:border-[var(--accent)] transition-colors"
           >
             Create Research Account
@@ -706,7 +706,7 @@ export function PreLoginPage() {
           </div>
           <div className="flex items-center gap-5">
             <Link href="/login" className="hover:text-[var(--text-primary)]">Sign In</Link>
-            <Link href="/signup" className="hover:text-[var(--text-primary)]">Create Account</Link>
+            <Link href="/login" className="hover:text-[var(--text-primary)]">Create Account</Link>
             <Link href="/dashboard" className="hover:text-[var(--text-primary)]">Terminal</Link>
             <Link href="/dashboard" className="hover:text-[var(--text-primary)]">Security</Link>
           </div>

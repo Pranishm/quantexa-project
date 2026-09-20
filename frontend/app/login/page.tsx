@@ -21,7 +21,7 @@ export default function LoginPage() {
     setLoading(true);
     setTimeout(() => {
       loginAsDemo("pro_researcher");
-      router.push("/app/overview");
+      router.push("/dashboard");
     }, 400);
   };
 
@@ -29,7 +29,7 @@ export default function LoginPage() {
     setLoading(true);
     setTimeout(() => {
       loginAsDemo("pro_researcher");
-      router.push("/app/overview");
+      router.push("/dashboard");
     }, 400);
   };
 
@@ -88,7 +88,7 @@ export default function LoginPage() {
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center text-xs font-mono">
                   <label className="text-[var(--text-secondary)]">Password</label>
-                  <Link href="/forgot-password" className="text-[var(--accent)] hover:underline text-[11px]">
+                  <Link href="/login" className="text-[var(--accent)] hover:underline text-[11px]">
                     Forgot?
                   </Link>
                 </div>
@@ -146,7 +146,7 @@ export default function LoginPage() {
 
             <div className="text-center text-xs text-[var(--text-secondary)] pt-1">
               Don&apos;t have an account?{" "}
-              <Link href="/signup" className="text-[var(--accent)] font-semibold hover:underline">
+              <Link href="/login" className="text-[var(--accent)] font-semibold hover:underline">
                 Create account
               </Link>
             </div>

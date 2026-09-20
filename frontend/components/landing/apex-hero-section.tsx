@@ -74,9 +74,67 @@ export function ApexHeroSection({ onExploreOptions }: { onExploreOptions: () => 
       {/* ── 3D WEBGL ROTATING BITCOIN + PARTICLES BACKGROUND ─────── */}
       <ApexHero3D />
 
+      {/* ── FLOATING BITCOIN COINS BACKGROUND ─────────────────────── */}
+      <div className="absolute inset-0 z-[2] pointer-events-none overflow-hidden">
+        {/* Coin 1 */}
+        <div className="absolute top-[15%] right-[12%] w-16 h-16 rounded-full border-2 border-[#F7931A]/20 flex items-center justify-center text-[#F7931A]/25 font-bold text-2xl animate-[float_6s_ease-in-out_infinite]">₿</div>
+        {/* Coin 2 */}
+        <div className="absolute top-[45%] right-[25%] w-10 h-10 rounded-full border border-[#F7931A]/15 flex items-center justify-center text-[#F7931A]/15 font-bold text-lg animate-[float_8s_ease-in-out_1s_infinite]">₿</div>
+        {/* Coin 3 */}
+        <div className="absolute bottom-[25%] right-[8%] w-12 h-12 rounded-full border border-[#F7931A]/10 flex items-center justify-center text-[#F7931A]/12 font-bold text-xl animate-[float_7s_ease-in-out_2s_infinite]">₿</div>
+        {/* Coin 4 - small */}
+        <div className="absolute top-[30%] right-[40%] w-6 h-6 rounded-full border border-[#F7931A]/10 flex items-center justify-center text-[#F7931A]/10 font-bold text-xs animate-[float_9s_ease-in-out_3s_infinite]">₿</div>
+      </div>
+
+      {/* ── ANIMATED CANDLESTICK CHART BACKGROUND ─────────────────── */}
+      <div className="absolute bottom-[10%] right-[5%] z-[2] pointer-events-none opacity-30 hidden lg:flex items-end gap-[3px] h-48">
+        {/* Each candle: thin wick line + thicker body */}
+        {[
+          { h: 60, body: 28, wick: 52, green: true, delay: '0s' },
+          { h: 45, body: 22, wick: 40, green: false, delay: '0.2s' },
+          { h: 72, body: 35, wick: 65, green: true, delay: '0.4s' },
+          { h: 38, body: 18, wick: 34, green: false, delay: '0.6s' },
+          { h: 82, body: 40, wick: 75, green: true, delay: '0.8s' },
+          { h: 55, body: 25, wick: 48, green: false, delay: '1s' },
+          { h: 90, body: 45, wick: 82, green: true, delay: '1.2s' },
+          { h: 48, body: 20, wick: 42, green: true, delay: '1.4s' },
+          { h: 65, body: 30, wick: 58, green: false, delay: '1.6s' },
+          { h: 78, body: 38, wick: 70, green: true, delay: '1.8s' },
+          { h: 42, body: 19, wick: 38, green: false, delay: '2s' },
+          { h: 95, body: 48, wick: 88, green: true, delay: '2.2s' },
+          { h: 58, body: 26, wick: 50, green: true, delay: '2.4s' },
+          { h: 35, body: 16, wick: 30, green: false, delay: '2.6s' },
+          { h: 85, body: 42, wick: 78, green: true, delay: '2.8s' },
+          { h: 50, body: 24, wick: 44, green: false, delay: '3s' },
+        ].map((candle, i) => (
+          <div key={i} className="flex flex-col items-center justify-end" style={{ height: `${candle.h}%`, animationDelay: candle.delay }}>
+            {/* Wick */}
+            <div
+              className="w-[1px] rounded-full"
+              style={{
+                height: `${candle.wick}%`,
+                backgroundColor: candle.green ? '#16C784' : '#EA3943',
+                opacity: 0.5,
+                animation: `pulse 2.5s ease-in-out ${candle.delay} infinite`,
+              }}
+            />
+            {/* Body */}
+            <div
+              className="w-[5px] rounded-sm"
+              style={{
+                height: `${candle.body}%`,
+                backgroundColor: candle.green ? '#16C784' : '#EA3943',
+                boxShadow: candle.green ? '0 0 6px rgba(22,199,132,0.3)' : '0 0 6px rgba(234,57,67,0.3)',
+                animation: `pulse 2.5s ease-in-out ${candle.delay} infinite`,
+              }}
+            />
+          </div>
+        ))}
+      </div>
+
       {/* Subtle radial vignette gradient to ensure text readability */}
-      <div className="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-r from-[#05070C] via-[#05070C]/80 to-transparent lg:max-w-3xl" />
-      <div className="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-t from-[#05070C] via-transparent to-[#05070C]/60" />
+      <div className="absolute inset-0 z-[3] pointer-events-none bg-gradient-to-r from-[#05070C] via-[#05070C]/80 to-transparent lg:max-w-3xl" />
+      <div className="absolute inset-0 z-[3] pointer-events-none bg-gradient-to-t from-[#05070C] via-transparent to-[#05070C]/60" />
 
       {/* ── HERO CONTENT ─────────────────────────────────────────── */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 w-full flex-1 flex flex-col justify-center">
