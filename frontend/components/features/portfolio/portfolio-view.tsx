@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { createChart, ColorType, IChartApi, ISeriesApi } from "lightweight-charts";
+import { createChart, ColorType, IChartApi, ISeriesApi, LineSeries } from "lightweight-charts";
 import { useEffect, useRef } from "react";
 import { api, API_BASE } from "@/lib/api";
 
@@ -36,7 +36,7 @@ function LineChart({ data }: { data: { time: string; value: number }[] }) {
       rightPriceScale: { borderColor: "rgba(255,255,255,0.1)" },
     });
 
-    const series = (chart as any).addLineSeries({
+    const series = chart.addSeries(LineSeries, {
       color: "var(--color-signal)",
       lineWidth: 2,
     });

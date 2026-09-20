@@ -12,7 +12,6 @@ import {
   ShieldCheck,
   Sliders,
   ArrowRight,
-  Bot,
 } from "lucide-react";
 
 interface CommandItem {
@@ -38,9 +37,6 @@ const COMMANDS: CommandItem[] = [
   { id: "asset-btc", category: "Assets", title: "Bitcoin (BTC-USD)", subtitle: "Crypto · daily bars · 365 periods/year", href: "/asset/BTC-USD", icon: TrendingUp },
   { id: "asset-gold", category: "Assets", title: "Gold (GC=F)", subtitle: "Commodity · daily bars · 252 periods/year", href: "/asset/GC%3DF", icon: TrendingUp },
   { id: "asset-nvda", category: "Assets", title: "NVIDIA (NVDA)", subtitle: "Equity · daily bars · 252 periods/year", href: "/asset/NVDA", icon: TrendingUp },
-
-  // AI
-  { id: "nav-featherless", category: "Navigation", title: "Featherless AI", subtitle: "Quantitative AI assistant for research queries", href: "/report", icon: Bot },
 
   // Strategies
   { id: "strat-sma", category: "Strategies", title: "SMA Crossover", subtitle: "Dual moving-average trend following", href: "/backtest?strategy=sma_cross", icon: FlaskConical },

@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { createChart, ColorType, IChartApi, ISeriesApi } from "lightweight-charts";
+import { createChart, ColorType, IChartApi, ISeriesApi, LineSeries } from "lightweight-charts";
 import { useEffect, useRef } from "react";
 import { API_BASE } from "@/lib/api";
 import type { Variants } from "framer-motion";
@@ -36,9 +36,9 @@ function BandChart({ dates, median, upper, lower }: { dates: string[], median: n
       rightPriceScale: { borderColor: "rgba(255,255,255,0.1)" },
     });
 
-    const upperSeries = (chart as any).addLineSeries({ color: "rgba(255,255,255,0.1)", lineWidth: 1 });
-    const lowerSeries = (chart as any).addLineSeries({ color: "rgba(255,255,255,0.1)", lineWidth: 1 });
-    const medianSeries = (chart as any).addLineSeries({ color: "var(--color-signal)", lineWidth: 2 });
+    const upperSeries = chart.addSeries(LineSeries, { color: "rgba(255,255,255,0.1)", lineWidth: 1 });
+    const lowerSeries = chart.addSeries(LineSeries, { color: "rgba(255,255,255,0.1)", lineWidth: 1 });
+    const medianSeries = chart.addSeries(LineSeries, { color: "var(--color-signal)", lineWidth: 2 });
 
     upperSeries.setData(dates.map((time, i) => ({ time, value: upper[i] })));
     lowerSeries.setData(dates.map((time, i) => ({ time, value: lower[i] })));

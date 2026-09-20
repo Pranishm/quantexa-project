@@ -22,7 +22,6 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Home,
-  Bot,
 } from "lucide-react";
 
 import { CommandPalette } from "@/components/shell/command-palette";
@@ -62,12 +61,6 @@ const NAV_SECTIONS: NavSection[] = [
     title: "REPORTING",
     items: [
       { id: "nav-report", label: "Research Report", href: "/report", icon: ShieldCheck },
-    ],
-  },
-  {
-    title: "AI",
-    items: [
-      { id: "nav-featherless", label: "Featherless AI", href: "/report", icon: Bot },
     ],
   },
 ];

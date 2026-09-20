@@ -35,7 +35,7 @@ export async function GET() {
     },
     aiProvider: {
       status: "healthy",
-      provider: "Featherless AI / Local Rules Fallback",
+      provider: "Quantora Financial Copilot / Local Rules Fallback",
       contextInjectionReady: true,
     },
     payments: {

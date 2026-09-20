@@ -29,45 +29,24 @@
   --color-ring: var(--accent);
 
   /* Quantitative Institutional Palette */
-  --color-root:    var(--bg-root);
+  --color-root: var(--bg-root);
   --color-sidebar: var(--bg-sidebar);
-  --color-surface: var(--bg-elevated);
+  --color-surface: var(--bg-surface);
   --color-elevated: var(--bg-elevated);
-  --color-hover:   var(--bg-hover);
+  --color-hover: var(--bg-hover);
 
   --color-border-subtle: var(--border);
   --color-border-strong: var(--border-strong);
 
-  --color-text-primary:   var(--text-primary);
+  --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
-  --color-text-muted:     var(--text-muted);
-  --color-text-subtle:    var(--text-subtle);
+  --color-text-muted: var(--text-muted);
+  --color-text-subtle: var(--text-subtle);
 
   --color-positive: var(--positive);
   --color-negative: var(--negative);
-  --color-warning:  var(--warning);
-  --color-neutral:  var(--neutral);
-
-  /* ── Legacy utility token aliases ─────────────────────────────────────────
-     These generate Tailwind utility classes consumed by older components:
-     bg-surface → elevated bg, bg-surface-2 → hover bg, bg-plane → root bg
-     text-ink → primary, text-ink-2 → secondary, text-ink-3 → muted
-     text-good → positive green, text-serious → negative red
-     border-hairline → subtle border
-     bg-panel → elevated, bg-panel-2 → hover
-     ─────────────────────────────────────────────────────────────────────── */
-  --color-surface-2:  var(--bg-hover);
-  --color-plane:      var(--bg-root);
-  --color-hairline:   var(--border-strong);
-  --color-panel:      var(--bg-elevated);
-  --color-panel-2:    var(--bg-hover);
-  --color-line:       var(--border-strong);
-  --color-ink:        var(--text-primary);
-  --color-ink-2:      var(--text-secondary);
-  --color-ink-3:      var(--text-muted);
-  --color-ink-dim:    var(--text-muted);
-  --color-good:       var(--positive);
-  --color-serious:    var(--negative);
+  --color-warning: var(--warning);
+  --color-neutral: var(--neutral);
 
   --radius-sm: 4px;
   --radius-md: 6px;
@@ -121,35 +100,7 @@
   --clay-recessed-sm: inset 2px 2px 6px rgba(0, 0, 0, 0.5), inset -2px -2px 5px rgba(255, 255, 255, 0.025);
 
   --radius: 12px;
-
-  /* ── Legacy token bridge ─────────────────────────────────────────────────
-     Many feature components (asset-view, backtest-view, lab-view, etc.) use
-     an older token set (--color-panel, --color-line, text-ink, bg-surface as
-     Tailwind utilities, border-hairline, etc.). Define them here so they
-     always resolve correctly in both dark and light modes.
-     ─────────────────────────────────────────────────────────────────────── */
-
-  /* CSS custom properties used via var() */
-  --color-panel:   var(--bg-elevated);
-  --color-panel-2: var(--bg-hover);
-  --color-line:    var(--border-strong);
-  --color-ink:     var(--text-primary);
-  --color-ink-2:   var(--text-secondary);
-  --color-ink-3:   var(--text-muted);
-  --color-ink-dim: var(--text-muted);
-
-  /* Tailwind-consumed utility tokens (bg-surface, bg-surface-2, bg-plane,
-     text-ink, text-ink-2, text-ink-3, border-hairline) */
-  --color-surface:   var(--bg-elevated);
-  --color-surface-2: var(--bg-hover);
-  --color-plane:     var(--bg-root);
-  --color-hairline:  var(--border-strong);
-
-  /* Aliased for card.tsx which uses bg-card / ring-foreground */
-  --color-card:      var(--bg-elevated);
-  --color-card-foreground: var(--text-primary);
 }
-
 
 /* Light Mode — Warm Ivory & Graphite Financial Paper Palette */
 :root.light, .light {
