@@ -45,6 +45,21 @@ export function ApexHeroSection({ onExploreOptions }: { onExploreOptions: () => 
   const priceControls = useAnimationControls();
   const lastPriceRef = useRef(104846.2);
 
+  // Live candle state
+  interface HeroCandle { id: number; open: number; high: number; low: number; close: number; green: boolean; }
+  const [heroCandles, setHeroCandles] = useState<HeroCandle[]>(() => {
+    const candles: HeroCandle[] = [];
+    let p = 103000;
+    for (let i = 0; i < 20; i++) {
+      const move = (Math.random() - 0.46) * 900;
+      const o = p, c = p + move;
+      candles.push({ id: i, open: o, high: Math.max(o, c) + Math.random() * 400, low: Math.min(o, c) - Math.random() * 400, close: c, green: c >= o });
+      p = c;
+    }
+    return candles;
+  });
+  const heroCandleId = useRef(20);
+
   // Live price tick loop with Framer Motion background flash
   useEffect(() => {
     const interval = setInterval(() => {
@@ -57,6 +72,17 @@ export function ApexHeroSection({ onExploreOptions }: { onExploreOptions: () => 
       setBtcPrice(Number(newPrice.toFixed(2)));
       setBtcChange(Number((((newPrice - 102400) / 102400) * 100).toFixed(2)));
       setIsUpTick(isUp);
+
+      // Add a new hero candle every tick
+      setHeroCandles(prev => {
+        const last = prev[prev.length - 1];
+        const basePrice = last ? last.close : newPrice;
+        const move = (Math.random() - 0.47) * 1200;
+        const o = basePrice, c = basePrice + move;
+        heroCandleId.current += 1;
+        const next = [...prev, { id: heroCandleId.current, open: o, high: Math.max(o, c) + Math.random() * 500, low: Math.min(o, c) - Math.random() * 500, close: c, green: c >= o }];
+        return next.slice(-20);
+      });
 
       // Trigger instantaneous background flash that smoothly fades
       const flashColor = isUp ? "rgba(22, 199, 132, 0.22)" : "rgba(234, 57, 67, 0.22)";
@@ -215,17 +241,15 @@ export function ApexHeroSection({ onExploreOptions }: { onExploreOptions: () => 
                 style={{ backgroundColor: "rgba(16, 19, 28, 0.85)" }}
               >
                 <span
-                  className={`w-2 h-2 rounded-full ${
-                    isUpTick ? "bg-[#16C784]" : "bg-[#EA3943]"
-                  } animate-pulse`}
+                  className={`w-2 h-2 rounded-full ${isUpTick ? "bg-[#16C784]" : "bg-[#EA3943]"
+                    } animate-pulse`}
                 />
                 <span className="font-bold text-[#F5F7FA]">
                   BTC ${btcPrice.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </span>
                 <span
-                  className={`font-semibold ${
-                    isUpTick ? "text-[#16C784]" : "text-[#EA3943]"
-                  }`}
+                  className={`font-semibold ${isUpTick ? "text-[#16C784]" : "text-[#EA3943]"
+                    }`}
                 >
                   {isUpTick ? `+${btcChange}%` : `${btcChange}%`}
                 </span>

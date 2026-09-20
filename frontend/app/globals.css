@@ -103,7 +103,8 @@
 }
 
 /* Light Mode — Warm Ivory & Graphite Financial Paper Palette */
-:root.light, .light {
+:root.light,
+.light {
   color-scheme: light;
 
   --bg-root: #E2E5E1;
@@ -244,8 +245,13 @@
 
 /* Subtle Marquee Slide */
 @keyframes ticker-slide {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .animate-ticker {
@@ -388,9 +394,12 @@
 
 /* Subtle physical breathing for 3D parameter surface & networks */
 @keyframes clay-breathe {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px) scale(1);
   }
+
   50% {
     transform: translateY(-3px) scale(1.006);
   }
@@ -443,7 +452,8 @@ input[type=range].clay-slider::-webkit-slider-thumb:hover {
 }
 
 /* Light mode neo overrides — bright, paper-like surface */
-:root.light, .light {
+:root.light,
+.light {
   --neo-bg: #E9EBE7;
   --neo-surface: rgba(235, 238, 232, 0.85);
   --neo-border: rgba(100, 110, 103, 0.16);
@@ -496,8 +506,15 @@ input[type=range].clay-slider::-webkit-slider-thumb:hover {
 
 /* Neo-Financial sparkline animations */
 @keyframes neo-pulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 .neo-pulse {
@@ -509,6 +526,7 @@ input[type=range].clay-slider::-webkit-slider-thumb:hover {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -528,6 +546,7 @@ input[type=range].clay-slider::-webkit-slider-thumb:hover {
     opacity: 0;
     transform: scale(0.98);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -539,6 +558,7 @@ input[type=range].clay-slider::-webkit-slider-thumb:hover {
     opacity: 1;
     transform: scale(1);
   }
+
   to {
     opacity: 0;
     transform: scale(0.98);
@@ -550,6 +570,7 @@ input[type=range].clay-slider::-webkit-slider-thumb:hover {
     opacity: 0;
     transform: translateY(12px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -561,6 +582,7 @@ input[type=range].clay-slider::-webkit-slider-thumb:hover {
     opacity: 0;
     transform: translateY(-12px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -568,9 +590,12 @@ input[type=range].clay-slider::-webkit-slider-thumb:hover {
 }
 
 @keyframes pulseGlow {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 15px rgba(0, 229, 153, 0.25);
   }
+
   50% {
     box-shadow: 0 0 35px rgba(0, 229, 153, 0.55);
   }
@@ -580,6 +605,7 @@ input[type=range].clay-slider::-webkit-slider-thumb:hover {
   0% {
     transform: translateX(-150%) skewX(-20deg);
   }
+
   100% {
     transform: translateX(250%) skewX(-20deg);
   }
@@ -610,19 +636,24 @@ html {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.14);
   border-radius: 9999px;
 }
+
 .light ::-webkit-scrollbar-thumb {
   background: rgba(80, 90, 85, 0.22);
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.28);
 }
+
 .light ::-webkit-scrollbar-thumb:hover {
   background: rgba(80, 90, 85, 0.38);
 }

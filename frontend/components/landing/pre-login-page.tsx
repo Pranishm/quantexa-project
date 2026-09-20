@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -83,7 +83,7 @@ const challengeOptions = [
   {
     title: "Interactive Financial Dashboard",
     desc: "Unify charts, metrics, insights, regime labels, and research actions in one workstation.",
-    href: "/app/overview",
+    href: "/dashboard",
     Icon: CheckCircle2,
   },
 ];
@@ -116,6 +116,32 @@ const executionCards = [
   },
 ];
 
+// ── Live Candlestick Generator ────────────────────────────────────────────────
+interface LiveCandle {
+  id: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  green: boolean;
+  vol: number;
+}
+
+function generateInitialCandles(count: number): LiveCandle[] {
+  const candles: LiveCandle[] = [];
+  let price = 98000 + Math.random() * 6000;
+  for (let i = 0; i < count; i++) {
+    const move = (Math.random() - 0.47) * 1200;
+    const open = price;
+    const close = price + move;
+    const high = Math.max(open, close) + Math.random() * 600;
+    const low = Math.min(open, close) - Math.random() * 600;
+    candles.push({ id: i, open, high, low, close, green: close >= open, vol: 0.2 + Math.random() * 0.8 });
+    price = close;
+  }
+  return candles;
+}
+
 export function PreLoginPage() {
   const [isDark, setIsDark] = useState(() => {
     if (typeof document === "undefined") return true;
@@ -123,6 +149,9 @@ export function PreLoginPage() {
   });
   const [activeTab, setActiveTab] = useState<"CANDLE" | "LINE" | "NORM">("CANDLE");
   const [voiceStep, setVoiceStep] = useState<number>(0);
+  const [liveCandles, setLiveCandles] = useState<LiveCandle[]>(() => generateInitialCandles(32));
+  const candleIdRef = useRef(32);
+  const livePriceRef = useRef(104284);
 
   const toggleTheme = () => {
     if (typeof document !== "undefined") {
@@ -139,6 +168,27 @@ export function PreLoginPage() {
     return () => clearInterval(timer);
   }, []);
 
+  // Live candle generation – add new candle every 1.2s
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLiveCandles((prev) => {
+        const last = prev[prev.length - 1];
+        const basePrice = last ? last.close : 104000;
+        const move = (Math.random() - 0.47) * 1400;
+        const open = basePrice;
+        const close = basePrice + move;
+        const high = Math.max(open, close) + Math.random() * 700;
+        const low = Math.min(open, close) - Math.random() * 700;
+        candleIdRef.current += 1;
+        livePriceRef.current = close;
+        const next = [...prev, { id: candleIdRef.current, open, high, low, close, green: close >= open, vol: 0.2 + Math.random() * 0.8 }];
+        // Keep only last 32 candles visible
+        return next.slice(-32);
+      });
+    }, 1200);
+    return () => clearInterval(interval);
+  }, []);
+
   const voicePrompts = [
     { cmd: "Compare BTC and Gold for the last year", resp: "Plotting normalized 1Y relative performance (BTC +42.1% vs GOLD +8.7%)." },
     { cmd: "Why did Bitcoin draw down in Q2 2024?", resp: "Identified Regime Shift into high-volatility range with -0.0005 daily drift." },
@@ -151,8 +201,23 @@ export function PreLoginPage() {
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
+  // Compute chart rendering data
+  const chartMin = Math.min(...liveCandles.map(c => c.low));
+  const chartMax = Math.max(...liveCandles.map(c => c.high));
+  const chartRange = chartMax - chartMin || 1;
+  const latestCandle = liveCandles[liveCandles.length - 1];
+
   return (
-    <div className="min-h-screen bg-[var(--bg-root)] text-[var(--text-primary)] font-sans antialiased overflow-x-hidden selection:bg-[var(--accent)]/20 transition-colors duration-250">
+    <div className="min-h-screen bg-[var(--bg-root)] text-[var(--text-primary)] font-sans antialiased overflow-x-hidden selection:bg-[var(--accent)]/20 transition-colors duration-250 relative">
+      {/* ── FLOATING BITCOIN COINS BACKGROUND (full page) ──────── */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[8%] left-[5%] w-20 h-20 rounded-full border-2 border-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)]/10 font-bold text-3xl animate-float" style={{ animationDuration: '7s' }}>₿</div>
+        <div className="absolute top-[22%] right-[8%] w-14 h-14 rounded-full border border-[var(--accent)]/8 flex items-center justify-center text-[var(--accent)]/8 font-bold text-xl animate-float" style={{ animationDuration: '9s', animationDelay: '1s' }}>₿</div>
+        <div className="absolute top-[55%] left-[3%] w-10 h-10 rounded-full border border-[var(--accent)]/6 flex items-center justify-center text-[var(--accent)]/6 font-bold text-base animate-float" style={{ animationDuration: '8s', animationDelay: '2s' }}>₿</div>
+        <div className="absolute top-[70%] right-[12%] w-16 h-16 rounded-full border border-[var(--accent)]/7 flex items-center justify-center text-[var(--accent)]/7 font-bold text-2xl animate-float" style={{ animationDuration: '10s', animationDelay: '3s' }}>₿</div>
+        <div className="absolute bottom-[15%] left-[15%] w-8 h-8 rounded-full border border-[var(--accent)]/5 flex items-center justify-center text-[var(--accent)]/5 font-bold text-sm animate-float" style={{ animationDuration: '11s', animationDelay: '4s' }}>₿</div>
+        <div className="absolute top-[40%] right-[30%] w-6 h-6 rounded-full border border-[var(--accent)]/4 flex items-center justify-center text-[var(--accent)]/4 font-bold text-xs animate-float" style={{ animationDuration: '12s', animationDelay: '5s' }}>₿</div>
+      </div>
       {/* ── 1. NAVBAR ────────────────────────────────────────────── */}
       <header className="absolute top-0 left-0 right-0 z-30 px-6 sm:px-10 py-5 flex items-center justify-between">
         {/* Left: Brand */}
@@ -501,28 +566,104 @@ export function PreLoginPage() {
             </div>
           </div>
 
-          <div className="h-64 flex items-center justify-center rounded-xl clay-recessed bg-[var(--bg-recessed)] text-xs font-mono text-[var(--text-muted)]">
-            <div className="text-center space-y-2">
-              <div className="flex items-end justify-center gap-1 h-12 mb-3">
-                <div className="w-1.5 bg-[var(--negative)] rounded-t animate-[pulse_1s_ease-in-out_infinite]" style={{ height: '50%' }}></div>
-                <div className="w-1.5 bg-[var(--positive)] rounded-t animate-[pulse_1.2s_ease-in-out_0.2s_infinite]" style={{ height: '80%' }}></div>
-                <div className="w-1.5 bg-[var(--positive)] rounded-t animate-[pulse_1.5s_ease-in-out_0.4s_infinite]" style={{ height: '90%' }}></div>
-                <div className="w-1.5 bg-[var(--negative)] rounded-t animate-[pulse_1.1s_ease-in-out_0.1s_infinite]" style={{ height: '60%' }}></div>
-                <div className="w-1.5 bg-[var(--positive)] rounded-t animate-[pulse_1.3s_ease-in-out_0.5s_infinite]" style={{ height: '100%' }}></div>
-                <div className="w-1.5 bg-[var(--negative)] rounded-t animate-[pulse_1.4s_ease-in-out_0.3s_infinite]" style={{ height: '40%' }}></div>
-              </div>
-              <div className="font-bold text-[var(--text-primary)]">Dense OHLCV Candlestick Engine</div>
-              <div className="text-[10px] max-w-sm mx-auto">
-                750+ deterministic sessions with synchronized volume pane, SMA 20/50, and buy/sell execution markers.
-              </div>
-              <Link
-                href="/asset/BTC-USD"
-                className="inline-flex items-center gap-1.5 text-xs text-[var(--accent)] hover:underline pt-2 font-semibold"
-              >
-                <span>Launch Interactive Chart Workstation</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
+          {/* ── LIVE ANIMATED CANDLESTICK CHART ─────────────────── */}
+          <div className="h-72 rounded-xl clay-recessed bg-[var(--bg-recessed)] text-xs font-mono text-[var(--text-muted)] overflow-hidden relative">
+            {/* Price scale on right */}
+            <div className="absolute right-0 top-0 bottom-8 w-16 flex flex-col justify-between py-2 pr-2 text-[9px] text-[var(--text-muted)] text-right z-10">
+              <span>${Math.round(chartMax).toLocaleString()}</span>
+              <span>${Math.round((chartMax + chartMin) / 2).toLocaleString()}</span>
+              <span>${Math.round(chartMin).toLocaleString()}</span>
             </div>
+
+            {/* Horizontal grid lines */}
+            <div className="absolute inset-0 bottom-8 right-16 flex flex-col justify-between py-2 pointer-events-none">
+              {[0, 1, 2, 3, 4].map(i => (
+                <div key={i} className="border-b border-[var(--border)]/30 w-full" />
+              ))}
+            </div>
+
+            {/* Candlesticks */}
+            <div className="absolute inset-0 bottom-8 right-16 flex items-end px-1 gap-[2px]">
+              {liveCandles.map((c) => {
+                const bodyTop = ((chartMax - Math.max(c.open, c.close)) / chartRange) * 100;
+                const bodyBottom = ((chartMax - Math.min(c.open, c.close)) / chartRange) * 100;
+                const wickTop = ((chartMax - c.high) / chartRange) * 100;
+                const wickBottom = ((chartMax - c.low) / chartRange) * 100;
+                const bodyHeight = Math.max(bodyBottom - bodyTop, 0.5);
+                const color = c.green ? 'var(--positive)' : 'var(--negative)';
+                return (
+                  <div key={c.id} className="flex-1 relative h-full animate-candle-grow" style={{ minWidth: 0 }}>
+                    {/* Wick */}
+                    <div
+                      className="absolute left-1/2 -translate-x-1/2 w-[1px]"
+                      style={{
+                        top: `${wickTop}%`,
+                        height: `${wickBottom - wickTop}%`,
+                        backgroundColor: color,
+                        opacity: 0.6,
+                      }}
+                    />
+                    {/* Body */}
+                    <div
+                      className="absolute left-[15%] right-[15%] rounded-[1px] transition-all duration-300"
+                      style={{
+                        top: `${bodyTop}%`,
+                        height: `${bodyHeight}%`,
+                        backgroundColor: color,
+                        boxShadow: c.green ? '0 0 4px rgba(22,199,132,0.25)' : '0 0 4px rgba(234,57,67,0.25)',
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Volume bars at bottom */}
+            <div className="absolute bottom-0 left-0 right-16 h-8 flex items-end px-1 gap-[2px] border-t border-[var(--border)]/20">
+              {liveCandles.map((c) => (
+                <div
+                  key={`v-${c.id}`}
+                  className="flex-1 rounded-t-[1px] transition-all duration-300"
+                  style={{
+                    height: `${c.vol * 100}%`,
+                    backgroundColor: c.green ? 'var(--positive)' : 'var(--negative)',
+                    opacity: 0.25,
+                    minWidth: 0,
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Live price indicator */}
+            <div className="absolute right-16 z-10 flex items-center" style={{ top: `${((chartMax - (latestCandle?.close || 0)) / chartRange) * 92}%` }}>
+              <div className="w-full border-t border-dashed border-[var(--accent)]/40" style={{ width: '100vw', position: 'absolute', right: 0 }} />
+              <div className="bg-[var(--accent)] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm whitespace-nowrap shadow-sm">
+                ${Math.round(latestCandle?.close || 0).toLocaleString()}
+              </div>
+            </div>
+
+            {/* Chart label overlay */}
+            <div className="absolute top-3 left-3 z-10 space-y-0.5">
+              <div className="text-[10px] font-bold text-[var(--text-primary)] flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--positive)] animate-pulse" />
+                LIVE · BTC/USD · 32 Sessions
+              </div>
+              <div className="text-[9px] text-[var(--text-muted)]">
+                O {Math.round(latestCandle?.open || 0).toLocaleString()} · H {Math.round(latestCandle?.high || 0).toLocaleString()} · L {Math.round(latestCandle?.low || 0).toLocaleString()} · C {Math.round(latestCandle?.close || 0).toLocaleString()}
+              </div>
+            </div>
+          </div>
+
+          {/* CTA below chart */}
+          <div className="flex items-center justify-between pt-1">
+            <div className="text-[10px] text-[var(--text-muted)] font-mono">Real-time candlestick generation · 750+ deterministic sessions available</div>
+            <Link
+              href="/asset/BTC-USD"
+              className="inline-flex items-center gap-1.5 text-xs text-[var(--accent)] hover:underline font-semibold"
+            >
+              <span>Launch Full Workstation</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
       </section>
